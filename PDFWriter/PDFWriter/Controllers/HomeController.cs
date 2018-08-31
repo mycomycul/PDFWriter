@@ -17,7 +17,8 @@ namespace GoogleDrive.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            createGrid("c:/temp/Agreement.pdf", @"c:\temp\SignedAgreementGrid.pdf");
+
+            //createGrid("c:/temp/Agreement.pdf", @"c:\temp\SignedAgreementGrid.pdf");
             return View("Index");
         }
         [HttpPost]
@@ -42,24 +43,38 @@ namespace GoogleDrive.Controllers
             //Source location of JSON printing coordinates
             string JSONPath = @"C:\Users\Michael\Desktop\Programming\Projects\PDFWriter\PDFWriter\PDFWriter\App_Data\SeattleData.json";
 
-            PdfDocument PDFDoc = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
-            PdfDocument document = new PdfDocument();
-            document.Info.Author = "Author";
-            document.Info.Keywords = "Keywords";
-            document.Info.Title = "Document Title";
+            PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
+            PdfDocument newPDF = new PdfDocument();
+            newPDF.Info.Author = "Author";
+            newPDF.Info.Keywords = "Enrollment";
+            newPDF.Info.Title = "Document Title";
+            for (int p = 0; p < originalPDF.PageCount; p++)
+            {
+                PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
+                page.Size = PageSize.A4;
+            }
 
-            PdfPage page = document.AddPage(PDFDoc.Pages[0]);
-            page.Size = PageSize.A4;
             /*Create a JSON file that holds the input value locations to be printed on the PDF and update file paths.  See sample in AppData
              *Input locations need to match the order of the input boxes on the submitted form*/
-            JObject jsonFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
-            dynamic pageFields = jsonFields["inputs"];
+            JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
+            dynamic pages = jsonPageFields;
 
             /*Loop through all elements and find the match coordinates for where to print*/
+            var pageNumber = 1;
+            int JSONObjectNumber = 0;
             for (int i = 0; i < inputs.Count; i++)
             {
-                dynamic f = pageFields[i];
-                using (XGraphics gfx = XGraphics.FromPdfPage(page))
+                var pageString = "page" + pageNumber.ToString();
+                dynamic currentPage = pages[pageString];
+                if ((currentPage["inputs"].Count) <= (i - JSONObjectNumber))
+                {
+                    pageNumber++;
+                    pageString = "page" + pageNumber.ToString();
+                    currentPage = pages[pageString];
+                    JSONObjectNumber = i;
+                };
+                dynamic f = currentPage["inputs"][i-JSONObjectNumber];
+                using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber-1]))
                 {
                     XFont font = new XFont("Times New Roman", 20, XFontStyle.BoldItalic);
                     XPoint xTL = new XPoint(Convert.ToDouble(f["left"]), Convert.ToDouble(f["top"]));
@@ -68,7 +83,7 @@ namespace GoogleDrive.Controllers
                 }
             }
             
-            document.Save(targetPath);
+            newPDF.Save(targetPath);
             Process.Start(targetPath);
 
         }
@@ -77,14 +92,16 @@ namespace GoogleDrive.Controllers
          * Change the locations in the function call to change you filepaths and uncomment on of the loop section*/
         public void createGrid(string source, string target)
         {
-            PdfDocument PDFDoc = PdfReader.Open(source, PdfDocumentOpenMode.Import);
-            PdfDocument document = new PdfDocument();
-            document.Info.Author = "Author";
-            document.Info.Keywords = "Enrollment";
-            document.Info.Title = "Document Title";
-
-            PdfPage page = document.AddPage(PDFDoc.Pages[0]);
-            page.Size = PageSize.A4;
+            PdfDocument originalPDF = PdfReader.Open(source, PdfDocumentOpenMode.Import);
+            PdfDocument newPDF = new PdfDocument();
+            newPDF.Info.Author = "Author";
+            newPDF.Info.Keywords = "Enrollment";
+            newPDF.Info.Title = "Document Title";
+            for (int p = 0; p < originalPDF.PageCount; p++)
+            {
+                PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
+                page.Size = PageSize.A4;
+            }
 
             /*Create one vertical line of coordinates. Change left to move line horizontally. Coordinates in (left,top) format*/
             //double left = 260;
@@ -115,25 +132,26 @@ namespace GoogleDrive.Controllers
             //}
 
             //Create entire page of gridding
-
-            for (int x = 0; x < 25; x++)
+            for (int p = 0; p < newPDF.PageCount; p++)
             {
-                for (int y = 0; y < 36; y++)
+                for (int x = 0; x < 25; x++)
                 {
-                    using (XGraphics gfx = XGraphics.FromPdfPage(page))
+                    for (int y = 0; y < 36; y++)
                     {
-                        //XGraphics gfx = XGraphics.FromPdfPage(page);
-                        XFont font = new XFont("Times New Roman", 6, XFontStyle.BoldItalic);
-                        XPoint xTL = new XPoint(x * 25, y * 25);
-                        XPoint xBR = new XPoint(x * 25, y * 25);
-                        gfx.DrawString((x * 25).ToString() + "," + (y * 25).ToString(), font, XBrushes.Black, new XRect(xTL, xBR));
+                        using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[p]))
+                        {
+                            //XGraphics gfx = XGraphics.FromPdfPage(page);
+                            XFont font = new XFont("Times New Roman", 6, XFontStyle.BoldItalic);
+                            XPoint xTL = new XPoint(x * 25, y * 25);
+                            XPoint xBR = new XPoint(x * 25, y * 25);
+                            gfx.DrawString((x * 25).ToString() + "," + (y * 25).ToString(), font, XBrushes.Black, new XRect(xTL, xBR));
+                        }
                     }
                 }
             }
-
             //Save Location for the Grid File
             string filename = target;
-            document.Save(filename);
+            newPDF.Save(filename);
             Process.Start(filename);
         }
     }

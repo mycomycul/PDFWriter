@@ -1,75 +1,131 @@
-{ // "PDF": {
-  //    "name": "Seattle Enrollment Agreement",
-  //    "page" {
-  //      "number": 1,
-  "inputs": [
-    {
-      "field": "Name",
-      "left": 260,
-      "top": 425
-    },
-    {
-      "field": "Email",
-      "left": 260,
-      "top": 457
-    },
-    {
-      "field": "Address",
-      "left": 260,
-      "top": 490
-    },
-    {
-      "field": "City",
-      "left": 260,
-      "top": 515
-    },
-    {
-      "field": "State",
-      "left": 260,
-      "top": 545
-    },
-    {
-      "field": "Zip",
-      "left": 260,
-      "top": 575
-    },
-    {
-      "field": "Country",
-      "left": 260,
-      "top": 605
-    },
-    {
-      "field": "County",
-      "left": 260,
-      "top": 635
-    },
-    {
-      "field": "Phone",
-      "left": 260,
-      "top": 665
-    },
-    {
-      "field": "StartDate",
-      "left": 260,
-      "top": 695
-    },
-    {
-      "field": "EmergencyContactName",
-      "left": 260,
-      "top": 725
-    },
-    {
-      "field": "EmergencyContactNumber",
-      "left": 260,
-      "top": 755
-    },
-    {
-      "field": "Initials",
-      "left": 475,
-      "top": 800
-    }
+{
+  "page1": {
+    "inputs": [
+      {
+        "field": "Name",
+        "left": 260,
+        "top": 425
+      },
+      {
+        "field": "Email",
+        "left": 260,
+        "top": 457
+      },
+      {
+        "field": "Address",
+        "left": 260,
+        "top": 490
+      },
+      {
+        "field": "City",
+        "left": 260,
+        "top": 515
+      },
+      {
+        "field": "State",
+        "left": 260,
+        "top": 545
+      },
+      {
+        "field": "Zip",
+        "left": 260,
+        "top": 575
+      },
+      {
+        "field": "Country",
+        "left": 260,
+        "top": 605
+      },
+      {
+        "field": "County",
+        "left": 260,
+        "top": 635
+      },
+      {
+        "field": "Phone",
+        "left": 260,
+        "top": 665
+      },
+      {
+        "field": "StartDate",
+        "left": 260,
+        "top": 695
+      },
+      {
+        "field": "EmergencyContactName",
+        "left": 260,
+        "top": 725
+      },
+      {
+        "field": "EmergencyContactNumber",
+        "left": 260,
+        "top": 755
+      },
+      {
+        "field": "Initials1",
+        "left": 475,
+        "top": 800
+      }
 
-
-
-  ]
+    ]
+  },
+  "page2": {
+    "inputs": [
+      {
+        "field": "BirthDate",
+        "left": 260,
+        "top": 175
+      },
+      {
+        "field": "Gender",
+        "left": 260,
+        "top": 205
+      },
+      {
+        "field": "Veteran",
+        "left": 260,
+        "top": 235
+      },
+      {
+        "field": "Disabilities",
+        "left": 260,
+        "top": 265
+      },
+      {
+        "field": "Race",
+        "left": 260,
+        "top": 295
+      },
+      {
+        "field": "LastHighSchool",
+        "left": 260,
+        "top": 325
+      },
+      {
+        "field": "HighSchoolGraduate",
+        "left": 260,
+        "top": 355
+      },
+      {
+        "field": "GraduateYear",
+        "left": 260,
+        "top": 385
+      },
+      {
+        "field": "GED",
+        "left": 260,
+        "top": 415
+      },
+      {
+        "field": "GEDYear",
+        "left": 260,
+        "top": 445
+      },
+      {
+        "field": "Initials2",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  }
 }
