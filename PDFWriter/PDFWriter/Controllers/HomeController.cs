@@ -26,9 +26,14 @@ namespace GoogleDrive.Controllers
             return View("Index");
         }
 
+        public ActionResult MapPDF()
+        {
+            return View("");
+        }
+
         public void UpdatePDf(string sName)
         {
-            PdfDocument PDFDoc = PdfReader.Open(@"C:\temp\Agreement.pdf", PdfDocumentOpenMode.Import);
+            PdfDocument PDFDoc = PdfReader.Open("$(SolutionDir)/PDFWriter/Files/", PdfDocumentOpenMode.Import);
             PdfDocument document = new PdfDocument();
             document.Info.Author = "Author";
             document.Info.Keywords = "Enrollment";
