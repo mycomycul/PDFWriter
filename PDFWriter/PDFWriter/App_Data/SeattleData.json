@@ -1,0 +1,75 @@
+{ // "PDF": {
+  //    "name": "Seattle Enrollment Agreement",
+  //    "page" {
+  //      "number": 1,
+  "inputs": [
+    {
+      "field": "Name",
+      "left": 260,
+      "top": 425
+    },
+    {
+      "field": "Email",
+      "left": 260,
+      "top": 457
+    },
+    {
+      "field": "Address",
+      "left": 260,
+      "top": 490
+    },
+    {
+      "field": "City",
+      "left": 260,
+      "top": 515
+    },
+    {
+      "field": "State",
+      "left": 260,
+      "top": 545
+    },
+    {
+      "field": "Zip",
+      "left": 260,
+      "top": 575
+    },
+    {
+      "field": "Country",
+      "left": 260,
+      "top": 605
+    },
+    {
+      "field": "County",
+      "left": 260,
+      "top": 635
+    },
+    {
+      "field": "Phone",
+      "left": 260,
+      "top": 665
+    },
+    {
+      "field": "StartDate",
+      "left": 260,
+      "top": 695
+    },
+    {
+      "field": "EmergencyContactName",
+      "left": 260,
+      "top": 725
+    },
+    {
+      "field": "EmergencyContactNumber",
+      "left": 260,
+      "top": 755
+    },
+    {
+      "field": "Initials",
+      "left": 475,
+      "top": 800
+    }
+
+
+
+  ]
+}
