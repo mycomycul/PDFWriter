@@ -24,7 +24,7 @@ namespace GoogleDrive.Controllers
         [HttpPost]
         public ActionResult Index(List<string> inputs)
         {
-            CreateAgreement(inputs);
+            //Print(inputs);
             return View("Index");
         }
 
@@ -34,7 +34,7 @@ namespace GoogleDrive.Controllers
         }
 
         /*Method will pull the first page off a document, print data from input boxes to corresponding coordinates and save it to a new location*/
-        public void CreateAgreement(List<string> inputs)
+        public void Print(List<string> inputs)
         {
             //Where to save the completed document
             string targetPath = @"c:\temp\SignedAgreement.pdf";
@@ -61,9 +61,11 @@ namespace GoogleDrive.Controllers
 
             /*Loop through all elements and find the match coordinates for where to print*/
             var pageNumber = 1;
+            string fontFamily;
             int JSONObjectNumber = 0;
             for (int i = 0; i < inputs.Count; i++)
             {
+                //Determine which page in the JSON document to grab coordinates from
                 var pageString = "page" + pageNumber.ToString();
                 dynamic currentPage = pages[pageString];
                 if ((currentPage["inputs"].Count) <= (i - JSONObjectNumber))
@@ -76,7 +78,11 @@ namespace GoogleDrive.Controllers
                 dynamic f = currentPage["inputs"][i-JSONObjectNumber];
                 using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber-1]))
                 {
-                    XFont font = new XFont("Times New Roman", 20, XFontStyle.BoldItalic);
+                    if (f.ContainsKey("font")) {
+                        fontFamily = f["font"];
+                    }
+                    else { fontFamily = "Arial"; }
+                    XFont font = new XFont(fontFamily, 16, XFontStyle.BoldItalic);
                     XPoint xTL = new XPoint(Convert.ToDouble(f["left"]), Convert.ToDouble(f["top"]));
                     XPoint xBR = new XPoint(Convert.ToDouble(f["left"]), Convert.ToDouble(f["top"]));
                     gfx.DrawString(inputs[i], font, XBrushes.Black, new XRect(xTL, xBR));

@@ -127,5 +127,170 @@
         "top": 800
       }
     ]
+  },
+  "page3": {
+    "inputs": [
+      {
+        "field": "Initials3",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page4": {
+    "inputs": [
+      {
+        "field": "Initials4",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page5": {
+    "inputs": [
+      {
+        "field": "Initials5",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page6": {
+    "inputs": [
+      {
+        "field": "Initials6",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page7": {
+    "inputs": [
+      {
+        "field": "Initials7",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page8": {
+    "inputs": [
+      {
+        "field": "Initials8",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page9": {
+    "inputs": [
+      {
+        "field": "Initials9",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page10": {
+    "inputs": [
+      {
+        "field": "Initials10",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page11": {
+    "inputs": [
+      {
+        "field": "Initials11",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page12": {
+    "inputs": [
+      {
+        "field": "Initials12",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page13": {
+    "inputs": [
+      {
+        "field": "Initials13",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page14": {
+    "inputs": [
+      {
+        "field": "Initials14",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page15": {
+    "inputs": [
+      {
+        "field": "Initials15",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page16": {
+    "inputs": [
+      {
+        "field": "StudentPrintedName16",
+        "left": 75,
+        "top": 220
+      },
+      {
+        "field": "StudentSignature16",
+        "left": 75,
+        "top": 280
+      },
+      {
+        "field": "StudentDate16",
+        "left": 350,
+        "top": 220
+      },
+      {
+        "field": "Initials16",
+        "left": 475,
+        "top": 800
+      }
+    ]
+  },
+  "page17": {
+    "inputs": [
+      {
+        "field": "StudentPrintedName17",
+        "left": 150,
+        "top": 295
+      },
+      {
+        "field": "StudentSignature17",
+        "left": 150,
+        "top": 355
+      },
+      {
+        "field": "StudentDate17",
+        "left": 400,
+        "top": 295
+      },
+      {
+        "field": "Initials17",
+        "left": 475,
+        "top": 800
+      }
+    ]
   }
 }
