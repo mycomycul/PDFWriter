@@ -7,6 +7,8 @@ using PDFWriter.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 using System.Web.Mvc;
 
 namespace GoogleDrive.Controllers
@@ -22,10 +24,21 @@ namespace GoogleDrive.Controllers
             //createGrid("c:/temp/Agreement.pdf", @"c:\temp\SignedAgreementGrid.pdf");
             return View("Index");
         }
-        [HttpPost]
-        public ActionResult Index(List<string> inputs)
+        public ActionResult Sign()
         {
-            //Print(inputs);
+
+            return View();
+        }
+        [HttpPost]
+        //public ActionResult Index(List<string> inputs)
+        //{
+        //    //Print(inputs);
+        //    return View("Index");
+        //}
+
+        public ActionResult Index(SeattleEAViewModel inputs)
+        {
+            PrintViewModel(inputs);
             return View("Index");
         }
 
@@ -35,6 +48,7 @@ namespace GoogleDrive.Controllers
         }
 
         /*Method will pull the first page off a document, print data from input boxes to corresponding coordinates and save it to a new location*/
+        //This is the functional method for printing on to the form
         public void Print(params string[] inputs)
 
         {
@@ -77,10 +91,11 @@ namespace GoogleDrive.Controllers
                     currentPage = pages[pageString];
                     JSONObjectNumber = i;
                 };
-                dynamic f = currentPage["inputs"][i-JSONObjectNumber];
-                using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber-1]))
+                dynamic f = currentPage["inputs"][i - JSONObjectNumber];
+                using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]))
                 {
-                    if (f.ContainsKey("font")) {
+                    if (f.ContainsKey("font"))
+                    {
                         fontFamily = f["font"];
                     }
                     else { fontFamily = "Arial"; }
@@ -90,72 +105,121 @@ namespace GoogleDrive.Controllers
                     gfx.DrawString(inputs[i], font, XBrushes.Black, new XRect(xTL, xBR));
                 }
             }
-            
+
             newPDF.Save(targetPath);
             Process.Start(targetPath);
 
         }
 
-        //public void PrintViewModel(SeattleEAViewModel vm)
-        //{
-        //    //Where to save the completed document
-        //    string targetPath = @"c:\temp\SignedAgreement.pdf";
-        //    //Where to get the PDF to print on
-        //    string sourcePath = @"C:/temp/Agreement.pdf";
-        //    //Source location of JSON printing coordinates
-        //    string JSONPath = @"C:\Users\Michael\Desktop\Programming\Projects\PDFWriter\PDFWriter\PDFWriter\App_Data\SeattleData.json";
 
-        //    PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
-        //    PdfDocument newPDF = new PdfDocument();
-        //    newPDF.Info.Author = "Author";
-        //    newPDF.Info.Keywords = "Enrollment";
-        //    newPDF.Info.Title = "Document Title";
-        //    for (int p = 0; p < originalPDF.PageCount; p++)
-        //    {
-        //        PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
-        //        page.Size = PageSize.A4;
-        //    }
 
-        //    /*Create a JSON file that holds the input value locations to be printed on the PDF and update file paths.  See sample in AppData
-        //     *Input locations need to match the order of the input boxes on the submitted form*/
-        //    JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
-        //    dynamic pages = jsonPageFields;
+        public void PrintViewModel(SeattleEAViewModel vm)
+        {
+            //Load vm properties so that they can be looped through
+            Type type = vm.GetType();
+            PropertyInfo[] VMProperties = type.GetProperties();
 
-        //    /*Loop through all elements and find the matching coordinates for where to print*/
-        //    var pageNumber = 1;
-        //    string fontFamily;
-        //    int JSONObjectNumber = 0;
-        //    for (int i = 0; i < inputs.Count; i++)
-        //    {
-        //        //Determine which page in the JSON document to grab coordinates from
-        //        var pageString = "page" + pageNumber.ToString();
-        //        dynamic currentPage = pages[pageString];
-        //        if ((currentPage["inputs"].Count) <= (i - JSONObjectNumber))
-        //        {
-        //            pageNumber++;
-        //            pageString = "page" + pageNumber.ToString();
-        //            currentPage = pages[pageString];
-        //            JSONObjectNumber = i;
-        //        };
-        //        dynamic f = currentPage["inputs"][i - JSONObjectNumber];
-        //        using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]))
-        //        {
-        //            if (f.ContainsKey("font"))
-        //            {
-        //                fontFamily = f["font"];
-        //            }
-        //            else { fontFamily = "Arial"; }
-        //            XFont font = new XFont(fontFamily, 16, XFontStyle.BoldItalic);
-        //            XPoint xTL = new XPoint(Convert.ToDouble(f["left"]), Convert.ToDouble(f["top"]));
-        //            XPoint xBR = new XPoint(Convert.ToDouble(f["left"]), Convert.ToDouble(f["top"]));
-        //            gfx.DrawString(inputs[i], font, XBrushes.Black, new XRect(xTL, xBR));
-        //        }
-        //    }
+            //Load JSON Data for printing values and create dynamic variable to hold values
+            string JSONPath = @"C:\Users\Michael\Desktop\Programming\Projects\PDFWriter\PDFWriter\PDFWriter\App_Data\SeattleData.json";
+            JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
+            dynamic pages = jsonPageFields.First;
 
-        //    newPDF.Save(targetPath);
-        //    Process.Start(targetPath);
+            /*Loop through JSON Data and look for key values with corresponding Class properties and if
+             * found, get the values from the ViewModel and JSON data send to print method*/
 
-        //}
+            foreach (PropertyInfo prop in VMProperties)
+            {
+                foreach (var page in pages)
+                {
+                    foreach (var inputs in page["inputs"])
+                    {
+                        if (inputs.GetValue("field") == prop.Name && prop.GetValue(vm) != null)
+                        {
+                            int top = (int)inputs.GetValue("top");
+                            int left = (int)inputs.GetValue("left");
+                            string font = (string)inputs.GetValue("font") != null? (string)inputs.GetValue("font"):"";
+                            int pageNumber = Convert.ToInt16(pages.Path.Replace("page", ""));
+                            string propValue = prop.GetValue(vm).ToString();
+                            PrintElement(top, left,font, pageNumber,propValue);
+                        }
+                    }
+
+                }
+
+            }
+
+            void PrintElement(int top, int left, string font, int pageNumber, string textToPrint)
+            {
+
+
+            }
+
+
+
+
+
+            //    //Where to save the completed document
+            //    string targetPath = @"c:\temp\SignedAgreement.pdf";
+            //    //Where to get the PDF to print on
+            //    string sourcePath = @"C:/temp/Agreement.pdf";
+            //    //Source location of JSON printing coordinates
+            //    string JSONPath = @"C:\Users\Michael\Desktop\Programming\Projects\PDFWriter\PDFWriter\PDFWriter\App_Data\SeattleData.json";
+
+            //    PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
+            //    PdfDocument newPDF = new PdfDocument();
+            //    newPDF.Info.Author = "Author";
+            //    newPDF.Info.Keywords = "Enrollment";
+            //    newPDF.Info.Title = "Document Title";
+            //    for (int p = 0; p < originalPDF.PageCount; p++)
+            //    {
+            //        PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
+            //        page.Size = PageSize.A4;
+            //    }
+
+            //    /*Create a JSON file that holds the input value locations to be printed on the PDF and update file paths.  See sample in AppData
+            //     *Input locations need to match the order of the input boxes on the submitted form*/
+            //    JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
+            //    dynamic pages = jsonPageFields;
+
+            //    /*Loop through all elements and find the matching coordinates for where to print*/
+            //    var pageNumber = 1;
+            //    string fontFamily;
+            //    int JSONObjectNumber = 0;
+            //    for (int i = 0; i < inputs.Count; i++)
+            //    {
+            //        //Determine which page in the JSON document to grab coordinates from
+            //        var pageString = "page" + pageNumber.ToString();
+            //        dynamic currentPage = pages[pageString];
+            //        if ((currentPage["inputs"].Count) <= (i - JSONObjectNumber))
+            //        {
+            //            pageNumber++;
+            //            pageString = "page" + pageNumber.ToString();
+            //            currentPage = pages[pageString];
+            //            JSONObjectNumber = i;
+            //        };
+            //        dynamic f = currentPage["inputs"][i - JSONObjectNumber];
+            //        using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]))
+            //        {
+            //            if (f.ContainsKey("font"))
+            //            {
+            //                fontFamily = f["font"];
+            //            }
+            //            else { fontFamily = "Arial"; }
+            //            XFont font = new XFont(fontFamily, 16, XFontStyle.BoldItalic);
+            //            XPoint xTL = new XPoint(Convert.ToDouble(f["left"]), Convert.ToDouble(f["top"]));
+            //            XPoint xBR = new XPoint(Convert.ToDouble(f["left"]), Convert.ToDouble(f["top"]));
+            //            gfx.DrawString(inputs[i], font, XBrushes.Black, new XRect(xTL, xBR));
+            //        }
+            //    }
+
+            //    newPDF.Save(targetPath);
+            //    Process.Start(targetPath);
+
+        }
+
+
+
+
 
         /*Use createGrid to print the target document with a grid of numbers so that input box locations can be determined
          * Change the locations in the function call to change you filepaths and uncomment on of the loop section*/

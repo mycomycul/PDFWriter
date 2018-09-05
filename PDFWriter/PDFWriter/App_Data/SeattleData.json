@@ -4,7 +4,8 @@
       {
         "field": "Name",
         "left": 260,
-        "top": 425
+        "top": 425,
+        "font": "Arial"
       },
       {
         "field": "Email",
