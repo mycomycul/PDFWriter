@@ -171,7 +171,7 @@ namespace GoogleDrive.Controllers
             {
                 XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]);
 
-                XFont font = new XFont(fontFamily, 16, XFontStyle.BoldItalic);
+                XFont font = new XFont(fontFamily, 16, XFontStyle.Regular);
                 XPoint xTL = new XPoint(left, top);
                 gfx.DrawString(textToPrint, font, XBrushes.Black, new XRect(xTL, xTL));
                 gfx.Dispose();

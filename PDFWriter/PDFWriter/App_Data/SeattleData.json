@@ -5,7 +5,7 @@
         "field": "Name",
         "left": 260,
         "top": 425,
-        "font": "Arial"
+        "font": "Console"
       },
       {
         "field": "Email",

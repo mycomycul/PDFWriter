@@ -7,6 +7,9 @@ namespace PDFWriter.ViewModels
 {
     public class SeattleEAViewModel
     {
+
+        /*Needs clientside validation.  All types should be string because these replicate written values and should be printed as such or 
+        *display formatting will need to be implemented in the print methods eliminate default formatting*/
         public string Name { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
@@ -16,9 +19,9 @@ namespace PDFWriter.ViewModels
         public string Country { get; set; }
         public string County { get; set; }
         public string Phone { get; set; }
-        public DateTime StartDate { get; set; }
+        public string StartDate { get; set; }
         public string EmergencyContactName { get; set; }
-        public int EmergencyContactNumber { get; set; }
+        public string EmergencyContactNumber { get; set; }
         public string Initials1 { get; set; }
         public string BirthDate { get; set; }
         public string Gender { get; set; }
