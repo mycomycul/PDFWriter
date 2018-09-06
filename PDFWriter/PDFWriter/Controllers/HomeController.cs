@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
@@ -20,104 +21,27 @@ namespace GoogleDrive.Controllers
     {
 
         // GET: Home
-        public ActionResult Index()
+        
+
+            //Get: Cat COntract
+            public ActionResult CatContract(CatContracViewModel vm)
         {
-
-            createGrid(@"c:/temp/Seattle Enrollment Agreement 2018.pdf", @"c:\temp\SeattleAgreementGrid.pdf");
-            return View("Index");
-        }
-        public ActionResult onlineenrollmentagreement()
-        {
-            return View();
-        }
-
-        // GET: portlandenrollmentagreement
-        public ActionResult portlandenrollmentagreement()
-        {
-            return View();
-        }
-                [HttpPost]
-        public ActionResult portlandenrollmentagreement(SeattleEAViewModel inputs)
-        {
-            PrintViewModelToPDF(inputs);
-
-            return View();
-        }
-
-        // GET: seattleenrollmentagreement
-        public ActionResult seattleenrollmentagreement()
-        {
-            return View();
-        }
-        //post: seattleenrollmentagreement
-        [HttpPost]
-        public ActionResult seattleenrollmentagreement(SeattleEAViewModel inputs)
-        {
-            PrintViewModelToPDF(inputs);
-
-            return View();
-        }
-
-        // GET: denverenrollmentagreement
-        public ActionResult denverenrollmentagreement()
-        {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult denverenrollmentagreement(SeattleEAViewModel inputs)
-        {
-            PrintViewModelToPDF(inputs);
-
-            return View();
-        }
-
-        public ActionResult Sign()
-        {
-
-            return View();
-        }
-        [HttpPost]
-        //public ActionResult Index(List<string> inputs)
-        //{
-        //    //Print(inputs);
-        //    return View("Index");
-        //}
-
-        public ActionResult Index(SeattleEAViewModel inputs)
-        {
-            //PrintViewModelToPDF(inputs);
-            return View("Index");
-        }
-
-
-    
-
-
-
-        public ActionResult signSeattleAgreement()
-        {
-            return new EmptyResult();
-        }
-        [HttpPost]
-        public ActionResult SignSeattle(Dictionary<string,string> vm)
-        {
-            var s = Request.Form;
-            PrintViewModelToPDF(s);
-            return new EmptyResult();
+            PrintViewModelToPDF(vm);
+            return View("Success");
         }
 
         public void PrintViewModelToPDF(dynamic vm)
         {
             /* Load PDF original into a new PDFDocument so that it can be printed to*/
             //Where to save the completed document
-            string targetPath = @"c:\temp\SignedAgreement.pdf";
+            string targetPath = @"C:/temp/Catcontract.pdf";
             //Where to get the PDF to print on
-            string sourcePath = @"C:/temp/Agreement.pdf";
+            string sourcePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"AppData\CatContract.pdf");
 
             PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
             PdfDocument newPDF = new PdfDocument();
             newPDF.Info.Author = "Author";
-            newPDF.Info.Keywords = "Enrollment";
+            newPDF.Info.Keywords = "Cat Contract";
             newPDF.Info.Title = "Document Title";
             for (int p = 0; p < originalPDF.PageCount; p++)
             {
@@ -131,7 +55,7 @@ namespace GoogleDrive.Controllers
             PropertyInfo[] VMProperties = type.GetProperties();
 
             //Load JSON Data for printing values and create dynamic variable to hold values
-            string JSONPath = @"C:\Users\Michael\Desktop\Programming\Projects\PDFWriter\PDFWriter\PDFWriter\App_Data\SeattleData.json";
+            string JSONPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"AppData\CatContract.json");
             JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
             dynamic pages = jsonPageFields.First;
 
@@ -171,60 +95,6 @@ namespace GoogleDrive.Controllers
             }
 
         }
-
-
-
-
-
-        //    //Where to save the completed document
-        //    string targetPath = @"c:\temp\SignedAgreement.pdf";
-        //    //Where to get the PDF to print on
-        //    string sourcePath = @"C:/temp/Agreement.pdf";
-        //    //Source location of JSON printing coordinates
-        //    string JSONPath = @"C:\Users\Michael\Desktop\Programming\Projects\PDFWriter\PDFWriter\PDFWriter\App_Data\SeattleData.json";
-
-        //    PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
-        //    PdfDocument newPDF = new PdfDocument();
-        //    newPDF.Info.Author = "Author";
-        //    newPDF.Info.Keywords = "Enrollment";
-        //    newPDF.Info.Title = "Document Title";
-        //    for (int p = 0; p < originalPDF.PageCount; p++)
-        //    {
-        //        PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
-        //        page.Size = PageSize.A4;
-        //    }
-
-        //    /*Create a JSON file that holds the input value locations to be printed on the PDF and update file paths.  See sample in AppData
-        //     *Input locations need to match the order of the input boxes on the submitted form*/
-        //    JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
-        //    dynamic pages = jsonPageFields;
-
-        //    /*Loop through all elements and find the matching coordinates for where to print*/
-        //    var pageNumber = 1;
-        //    string fontFamily;
-        //    int JSONObjectNumber = 0;
-        //    for (int i = 0; i < inputs.Count; i++)
-        //    {
-        //        //Determine which page in the JSON document to grab coordinates from
-        //        var pageString = "page" + pageNumber.ToString();
-        //        dynamic currentPage = pages[pageString];
-        //        if ((currentPage["inputs"].Count) <= (i - JSONObjectNumber))
-        //        {
-        //            pageNumber++;
-        //            pageString = "page" + pageNumber.ToString();
-        //            currentPage = pages[pageString];
-        //            JSONObjectNumber = i;
-        //        };
-        //        dynamic f = currentPage["inputs"][i - JSONObjectNumber];
-
-        //    }
-
-        //    newPDF.Save(targetPath);
-        //    Process.Start(targetPath);
-
-
-
-
 
 
         /*Use createGrid to print the target document with a grid of numbers so that input box locations can be determined
@@ -294,17 +164,21 @@ namespace GoogleDrive.Controllers
             newPDF.Save(filename);
             Process.Start(filename);
         }
+
+
+
+
         /*Gets data from input boxes on form and corresponding coordinates in JSON and prints them to a new copy of a PDF*/
         //This a previous version using a string array of identically named inputs as values and identically ordered JSON coordinates
         public void Print(params string[] inputs)
 
         {
             //Where to save the completed document
-            string targetPath = @"c:\temp\SignedAgreement.pdf";
+            string targetPath = @"C:/.pdf";
             //Where to get the PDF to print on
-            string sourcePath = @"C:/temp/Agreement.pdf";
+            string sourcePath = @"C:/.pdf";
             //Source location of JSON printing coordinates
-            string JSONPath = @"C:\Users\Michael\Desktop\Programming\Projects\PDFWriter\PDFWriter\PDFWriter\App_Data\SeattleData.json";
+            string JSONPath = @"C:/.json";
 
             PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
             PdfDocument newPDF = new PdfDocument();
