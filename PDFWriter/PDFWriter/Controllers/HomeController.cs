@@ -24,12 +24,17 @@ namespace GoogleDrive.Controllers
         
 
             //Get: Cat COntract
-            public ActionResult CatContract(CatContracViewModel vm)
+            public ActionResult CatContract(CatContractViewModel vm)
         {
             PrintViewModelToPDF(vm);
             return View("Success");
         }
-
+        //Get: Cat COntract
+        public ActionResult SignContract(CatContractViewModel vm)
+        {
+            //PrintViewModelToPDF(vm);
+            return View();
+        }
         public void PrintViewModelToPDF(dynamic vm)
         {
             /* Load PDF original into a new PDFDocument so that it can be printed to*/

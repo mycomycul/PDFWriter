@@ -8,7 +8,7 @@ namespace PDFWriter.ViewModels
 {
     public class CatContractViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Owner Name must be specified")]
         public string OwnerName1 { get; set; }
         public string CatName { get; set; }
         public string Name2 { get; set; }
@@ -46,8 +46,8 @@ namespace PDFWriter.ViewModels
         Nectaris,
         Imbrium,
         Gibbous,
-        Sinus,,
-        Breccia
+        Sinus,
+        Breccia,
         MilkyWay
     }
 }
