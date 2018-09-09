@@ -29,6 +29,7 @@ namespace PDFWriter.ViewModels
         public string VetName { get; set; }
         public string VetAddress { get; set; }
         public string VetPhone { get; set; }
+        public string SecondPageData { get; set; }
     }
     public enum LunarState
     {
