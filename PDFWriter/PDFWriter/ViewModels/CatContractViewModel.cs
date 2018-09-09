@@ -51,7 +51,7 @@ namespace PDFWriter.ViewModels
         public string Email { get; set; }
 
         [Required]
-        [Display(Name = "cat's Name")]
+        [Display(Name = "Cat's Name")]
         public string CatName2 { get; set; }
 
         public float Weight { get; set; }
