@@ -1,3 +1,44 @@
 @model PDFWriter.ViewModels.CatContractViewModel
 
-Cat Registration FormMoon City Pet Control2012 Galaxy Drive NWSolar System, MW 190000Under the wild species protection act, all cats are required to be kept indoors or attached to a leash no longer than 6 meters when outdoors. Cat are restricted from preying on any native lunar species and any predation by a cat resulting in loss of life by a lunar organism must be reported to Moon City Pet Control within 48 hours.As owner, I @Html.EditorFor(model => model.OwnerName1) agree to provide full supervision when taking my cat outdoors or ensure that the cat is not allowed to go outside unattended. If it is determined by the interplanet species control board that my actions were negligent, the cat ___________will be required to attend remediatory counseling and I _____________ will attend no less than 10 wildlife rehabilitation volunteer sessions at the nearest lunar species rehabilitation center signed on this the ___ day of the ___ month of the year______.Owner Name_______________________Address___________________________City_______________________________State______________________________Phone_____________________________Email_____________________________Cat Name _________________________Weight ____________________________Color______________________________Spayed/Neutered____________________Gender____________________________Chip# _____________________________Veterinarian________________________Address___________________________Phone____________________________Please return your cat registration form within 10 days of official habitation on the moon to the address above This is a second page to demonstrate additional page printing potential.
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>CatContractViewModel</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.EditorFor(model => model.OwnerName,  new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x=> x.OwnerName) } })
+    @Html.EditorFor(model => model.CatName, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.CatName) } })
+    @Html.EditorFor(model => model.OwnerName2, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerName2) } })
+    @Html.EditorFor(model => model.Day, new { htmlAttributes = new { @Value = DateTime.Today.Day, @disabled = "disabled" } })
+    @Html.EditorFor(model => model.Month, new { htmlAttributes = new { @Value = DateTime.Today.Month, @disabled = "disabled" } })
+    @Html.EditorFor(model => model.Year, new { htmlAttributes = new { @Value = DateTime.Today.Year, @disabled = "disabled" } })
+    @Html.EditorFor(model => model.OwnerName3, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerName3) } })
+    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.Address) } })
+    @Html.EditorFor(model => model.City, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.City) } })
+    @Html.EnumDropDownListFor(model => model.State)
+    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.PhoneNumber) } })
+    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.Email) } })
+    @Html.EditorFor(model => model.CatName2, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.CatName2) } })
+    @Html.EditorFor(model => model.Weight)
+    @Html.EditorFor(model => model.Color, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.Color) } })
+    <div class="checkbox">
+        @Html.EditorFor(model => model.Fixed)
+    </div>
+
+    @Html.EnumDropDownListFor(model => model.Gender)
+    @Html.EditorFor(model => model.ChipNumber, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.ChipNumber) } })
+    @Html.EditorFor(model => model.VetName, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.VetName) } })
+    @Html.EditorFor(model => model.VetAddress, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.VetAddress) } })
+    @Html.EditorFor(model => model.VetPhone, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.VetPhone) } })
+    @Html.EditorFor(model => model.SecondPageData, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.SecondPageData) } })
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+Cat Registration FormMoon City Pet Control2012 Galaxy Drive NWSolar System, MW 190000Under the wild species protection act, all cats are required to be kept indoors or attached to a leash no longer than 6 meters when outdoors. Cat are restricted from preying on any native lunar species and any predation by a cat resulting in loss of life by a lunar organism must be reported to Moon City Pet Control within 48 hours.As owner, I @*@Html.EditorFor(model => model.OwnerName1)*@ agree to provide full supervision when taking my cat outdoors or ensure that the cat is not allowed to go outside unattended. If it is determined by the interplanet species control board that my actions were negligent, the cat ___________will be required to attend remediatory counseling and I _____________ will attend no less than 10 wildlife rehabilitation volunteer sessions at the nearest lunar species rehabilitation center signed on this the ___ day of the ___ month of the year______.Owner Name_______________________Address___________________________City_______________________________State______________________________Phone_____________________________Email_____________________________Cat Name _________________________Weight ____________________________Color______________________________Spayed/Neutered____________________Gender____________________________Chip# _____________________________Veterinarian________________________Address___________________________Phone____________________________Please return your cat registration form within 10 days of official habitation on the moon to the address above This is a second page to demonstrate additional page printing potential.
