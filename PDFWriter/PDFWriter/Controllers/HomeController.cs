@@ -82,15 +82,16 @@ namespace GoogleDrive.Controllers
                             double top = inputs.Value<double>("top");
                             double left = inputs.Value<double>("left");
                             string fontFamily = inputs.Value<string>("font") != null ? (string)inputs.Value<string>("font") : "Arial";//Set Default fault in case none specified
+                            double fontSize = inputs.Value<string>("fontsize") != null ? Convert.ToDouble(inputs.Value<string>("fontsize")) : 14;//Set Default fault in case none specified
                             string propValue = prop.GetValue(vm).ToString();
-                            PrintElement(top, left, fontFamily, pageNumber, propValue);
+                            PrintElement(top, left, fontFamily, pageNumber, propValue, fontSize);
                         }
                     }
                 }
 
             }
             //Build savePath with applicant's name
-            savePath += "CatContract-" + vm.Name.Replace(" ", "") + DateTime.Today.ToString("MMddyyyy") + ".pdf";
+            savePath += "CatContract-" + vm.OwnerName1.Replace(" ", "") + DateTime.Today.ToString("MMddyyyy") + ".pdf";
 
 
             //Add try catch in case location already exists
@@ -99,11 +100,11 @@ namespace GoogleDrive.Controllers
 
             return savePath;
 
-            void PrintElement(double top, double left, string fontFamily, int pageNumber, string textToPrint)
+            void PrintElement(double top, double left, string fontFamily, int pageNumber, string textToPrint, double fontSize)
             {
                 XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]);
 
-                XFont font = new XFont(fontFamily, 16, XFontStyle.Regular);
+                XFont font = new XFont(fontFamily, fontSize, XFontStyle.Regular);
                 XPoint xTL = new XPoint(left, top);
                 gfx.DrawString(textToPrint, font, XBrushes.Black, new XRect(xTL, xTL));
                 gfx.Dispose();
