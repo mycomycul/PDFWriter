@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
@@ -29,6 +30,9 @@ namespace GoogleDrive.Controllers
         [HttpPost]
         public ActionResult CatContract(CatContractViewModel vm)
         {
+            
+            if (ModelState.IsValid) { 
+
             //Where to save the completed document
             string savePath = @"C:/temp/";
             //Where to get the PDF to print on
@@ -43,10 +47,18 @@ namespace GoogleDrive.Controllers
             //EmailMethod()
             MemoryStream stream = new MemoryStream();
             newCatContract.Save(stream, false);
-
-
-
             return File(stream, "application/pdf","CatContract");
+            }
+            else
+            {
+                string validationErrors = string.Join(",",
+                    ModelState.Values.Where(E => E.Errors.Count > 0)
+                    .SelectMany(E => E.Errors)
+                    .Select(E => E.ErrorMessage)
+                    .ToArray());
+
+                return View(vm);
+            }
         }
 
         public PdfDocument PrintViewModel(dynamic vm, string savePath, string sourcePath, string JSONPath)
@@ -277,6 +289,10 @@ namespace GoogleDrive.Controllers
             Process.Start(targetPath);
 
         }
+
+
+
+        
 
     }
 }
