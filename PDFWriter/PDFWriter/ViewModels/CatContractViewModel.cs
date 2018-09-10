@@ -20,9 +20,36 @@ namespace PDFWriter.ViewModels
         public string OwnerName2 { get; set; }
 
         [Required]
-        public int Day { get; set; }
-        [Required]
-        public int Month { get; set; }
+        string _day;
+        public string Day
+        {
+                get { return this._day; }
+
+                set {
+                    if (int.TryParse(value, out int a))
+                    {
+                        _day = value;
+
+                        switch (value[value.Length - 1].ToString())
+                        {
+                            case "1":
+                                _day += "st";
+                                break;
+                            case "2":
+                                _day += "nd";
+                                break;
+                            case "3":
+                                _day += "rd";
+                                break;
+                            default:
+                                _day += "th";
+                                break;
+                        }
+                    }
+                }
+            }
+            [Required]
+            public int Month { get; set; }
         [Required]
         public int Year { get; set; }
 
@@ -40,10 +67,11 @@ namespace PDFWriter.ViewModels
 
         public LunarState State { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "You must provide a phone number")]
         [Display(Name = "Home Phone")]
         [DataType(DataType.PhoneNumber)]
-        public int PhoneNumber { get; set; }
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Not a valid phone number")]
+        public string PhoneNumber { get; set; }
 
         [Required]
         [DataType(DataType.EmailAddress)]
