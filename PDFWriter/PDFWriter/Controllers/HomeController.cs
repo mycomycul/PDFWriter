@@ -37,15 +37,19 @@ namespace GoogleDrive.Controllers
             string JSONPath = @"C:/temp/Cat Contract Coordinates.json";
 
             //Create the document and save it to the specified location
-            string agreementLocation = PrintViewModel(vm, savePath, sourcePath, JSONPath);
+            PdfDocument newCatContract = PrintViewModel(vm, savePath, sourcePath, JSONPath);
 
             //Email the document to registration
             //EmailMethod()
+            MemoryStream stream = new MemoryStream();
+            newCatContract.Save(stream, false);
 
-            return View();
+
+
+            return File(stream, "application/pdf","CatContract");
         }
 
-        public string PrintViewModel(dynamic vm, string savePath, string sourcePath, string JSONPath)
+        public PdfDocument PrintViewModel(dynamic vm, string savePath, string sourcePath, string JSONPath)
         {
             /* Load PDF original into a new PDFDocument so that it can be printed to*/
 
@@ -81,30 +85,36 @@ namespace GoogleDrive.Controllers
                         {
                             double top = inputs.Value<double>("top");
                             double left = inputs.Value<double>("left");
+                            string fontStyle = inputs.Value<string>("fontstyle") != null ? (string)inputs.Value<string>("fontstyle") : "Regular";//Set Default fault in case none specified
                             string fontFamily = inputs.Value<string>("font") != null ? (string)inputs.Value<string>("font") : "Arial";//Set Default fault in case none specified
                             double fontSize = inputs.Value<string>("fontsize") != null ? Convert.ToDouble(inputs.Value<string>("fontsize")) : 14;//Set Default fault in case none specified
                             string propValue = prop.GetValue(vm).ToString();
-                            PrintElement(top, left, fontFamily, pageNumber, propValue, fontSize);
+                            PrintElement(top, left, fontFamily, pageNumber, propValue, fontSize, fontStyle);
                         }
                     }
                 }
 
             }
             //Build savePath with applicant's name
-            savePath += "CatContract-" + vm.OwnerName.Replace(" ", "") + DateTime.Today.ToString("MMddyyyy") + ".pdf";
+            string name = vm.OwnerName != null ? vm.OwnerName.Replace(" ", "") : "Unknown";
+            savePath += "CatContract-" + name + DateTime.Today.ToString("MMddyyyy") + ".pdf";
 
 
-            //Add try catch in case location already exists
-            newPDF.Save(savePath);
-            Process.Start(savePath);
+            //Add try catch in case in case it's currently open
+            //Save to Local Directory
+            //newPDF.Save(savePath);
+            //Process.Start(savePath);
 
-            return savePath;
+            return newPDF;
 
-            void PrintElement(double top, double left, string fontFamily, int pageNumber, string textToPrint, double fontSize)
+
+
+
+            void PrintElement(double top, double left, string fontFamily, int pageNumber, string textToPrint, double fontSize, string fontStyle)
             {
                 XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]);
 
-                XFont font = new XFont(fontFamily, fontSize, XFontStyle.Regular);
+                XFont font = new XFont(fontFamily, fontSize, (XFontStyle)Enum.Parse(typeof(XFontStyle),fontStyle));
                 XPoint xTL = new XPoint(left, top);
                 gfx.DrawString(textToPrint, font, XBrushes.Black, new XRect(xTL, xTL));
                 gfx.Dispose();
