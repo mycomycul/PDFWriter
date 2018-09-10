@@ -30,33 +30,27 @@ namespace GoogleDrive.Controllers
         [HttpPost]
         public ActionResult CatContract(CatContractViewModel vm)
         {
-            
-            if (ModelState.IsValid) { 
 
-            //Where to save the completed document
-            string savePath = @"C:/temp/";
-            //Where to get the PDF to print on
-            string sourcePath = @"C:/temp/Cat Contract.pdf";
-            //JSON coordinates of where to print on the new PDF
-            string JSONPath = @"C:/temp/Cat Contract Coordinates.json";
+            if (ModelState.IsValid)
+            {
+                //Where to save the completed document
+                string savePath = @"C:/temp/";
+                //Where to get the PDF to print on
+                string sourcePath = @"C:/temp/Cat Contract.pdf";
+                //JSON coordinates of where to print on the new PDF
+                string JSONPath = @"C:/temp/Cat Contract Coordinates.json";
 
-            //Create the document and save it to the specified location
-            PdfDocument newCatContract = PrintViewModel(vm, savePath, sourcePath, JSONPath);
+                //Create the document and save it to the specified location
+                PdfDocument newCatContract = PrintViewModel(vm, savePath, sourcePath, JSONPath);
 
-            //Email the document to registration
-            //EmailMethod()
-            MemoryStream stream = new MemoryStream();
-            newCatContract.Save(stream, false);
-            return File(stream, "application/pdf","CatContract");
+                //Email the document to registration
+                //EmailMethod()
+                MemoryStream stream = new MemoryStream();
+                newCatContract.Save(stream, false);
+                return File(stream, "application/pdf", "CatContract");
             }
             else
             {
-                string validationErrors = string.Join(",",
-                    ModelState.Values.Where(E => E.Errors.Count > 0)
-                    .SelectMany(E => E.Errors)
-                    .Select(E => E.ErrorMessage)
-                    .ToArray());
-
                 return View(vm);
             }
         }
@@ -126,7 +120,7 @@ namespace GoogleDrive.Controllers
             {
                 XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]);
 
-                XFont font = new XFont(fontFamily, fontSize, (XFontStyle)Enum.Parse(typeof(XFontStyle),fontStyle));
+                XFont font = new XFont(fontFamily, fontSize, (XFontStyle)Enum.Parse(typeof(XFontStyle), fontStyle));
                 XPoint xTL = new XPoint(left, top);
                 gfx.DrawString(textToPrint, font, XBrushes.Black, new XRect(xTL, xTL));
                 gfx.Dispose();
@@ -142,8 +136,8 @@ namespace GoogleDrive.Controllers
         /*Use createGrid to print the target document with a grid of numbers so that input box locations can be determined
          * Grids can be a single vertical or horizontal line or a full page grid
          * Change the locations in the function call to change you filepaths and uncomment the appropriate loop sections*/
-         //POST CreateGrid
-         [HttpPost]
+        //POST CreateGrid
+        [HttpPost]
         public ActionResult createGrid()
         {
             string path = "c:/temp/";
@@ -292,7 +286,7 @@ namespace GoogleDrive.Controllers
 
 
 
-        
+
 
     }
 }
