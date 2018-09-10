@@ -76,7 +76,10 @@ namespace PDFWriter.ViewModels
         [Display(Name = "Vet Phone")]
         [DataType(DataType.PhoneNumber)]
         public string VetPhone { get; set; }
-        [Display(Name = "Insert text to demonstrate printing on the second page")]
+        [Required]
+        [Display(Name = "Enter your name to sign")]
+        public string OwnerSignature { get; set; }
+        [Required]
         public string SecondPageData { get; set; }
     }
     public enum LunarState

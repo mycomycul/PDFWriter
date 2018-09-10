@@ -91,7 +91,7 @@ namespace GoogleDrive.Controllers
 
             }
             //Build savePath with applicant's name
-            savePath += "CatContract-" + vm.OwnerName1.Replace(" ", "") + DateTime.Today.ToString("MMddyyyy") + ".pdf";
+            savePath += "CatContract-" + vm.OwnerName.Replace(" ", "") + DateTime.Today.ToString("MMddyyyy") + ".pdf";
 
 
             //Add try catch in case location already exists
