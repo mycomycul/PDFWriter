@@ -94,7 +94,7 @@ namespace PDFWriter.ViewModels
 
         [Required(ErrorMessage = "All lunar cats must be chipped")]
         [RegularExpression(@"([0-9]+)", ErrorMessage = "Chip number only includes numbers")]
-        [Range(111111111, 999999999, ErrorMessage = "Chip must be w number with 9 digits")]
+        [Range(111111111, 999999999, ErrorMessage = "Chip number must have 9 digits")]
         public int ChipNumber { get; set; }
 
         [Display(Name = "Veterination Name")]
@@ -105,9 +105,10 @@ namespace PDFWriter.ViewModels
         [DataType(DataType.PhoneNumber)]
         public string VetPhone { get; set; }
         [Required]
-        [Display(Name = "Enter your name to sign")]
+        [Display(Name = "Digital Signature")]
         public string OwnerSignature { get; set; }
-        [Required]
+
+        [Display(Name = "Second Page Notes")]
         public string SecondPageData { get; set; }
     }
     public enum LunarState

@@ -26,7 +26,7 @@
         <br />
 
         <div class="row" style="line-height:1.6em; margin-top:30px">
-            <div class="col-sm-6 col-xs-4">
+            <div class="col-xs-12 col-sm-6 ">
                 <div class="row">
 
                     <div class="col-sm-3">OwnerName</div>
@@ -74,7 +74,7 @@
 
             </div>
 
-            <div class="col-sm-6 col-xs-4">
+            <div class="col-xs-12 col-sm-6 ">
 
                 <div class="row">
                     <div class="col-sm-3">Cat Name</div>
@@ -111,7 +111,7 @@
                 <div class="row">
                     <div class="col-sm-3">Chip #</div>
                     <div class="col-sm-9">
-                        @Html.EditorFor(model => model.ChipNumber, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.ChipNumber) } })
+                        @Html.EditorFor(model => model.ChipNumber, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.ChipNumber), min = 111111111, max = 999999999 } })
                     </div>
                 </div>
                 <div class="row">
@@ -138,8 +138,7 @@
                     <div class="row">
                         <div class="col-sm-9 text-center">
                             @Html.EditorFor(model => model.OwnerSignature, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerSignature), @style = "width:100%" } })
-                            <hr />
-
+                            <hr style="border:none; height:1px;background-color:#999; margin-top:5px; margin-bottom:5px;"/>
                             Owner's Signature
                         </div>
                     </div>
@@ -154,9 +153,9 @@
         </div>
             <div style="margin-left:auto;margin-right:auto;text-align:center" class="form-group">
                 @Html.TextAreaFor(model => model.SecondPageData, 5, 40, new { placeholder = Html.DisplayNameFor(x => x.SecondPageData) })
+                <br />
 
-
-                <div class="col-md-offset-2 col-md-10">
+                <div>
                     <input type="submit" value="Submit and Download" class="btn btn-default" />
                     <input type="submit" value="Submit and Email" class="btn btn-default" />
                 </div>
