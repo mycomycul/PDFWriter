@@ -153,6 +153,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\FileUpload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\CatContractViewModel.cs" />
   </ItemGroup>
@@ -228,10 +229,10 @@
     <Content Include="Views\Home\CatContract.cshtml" />
     <Content Include="Views\Home\CreateGrid.cshtml" />
     <Content Include="Views\Home\View.cshtml" />
+    <Content Include="Views\Home\error.cshtml" />
+    <Content Include="Views\Home\success.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

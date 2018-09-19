@@ -1,4 +1,4 @@
-﻿
+﻿@model HttpPostedFileBase
 @{
     ViewBag.Title = "CreateGrid";
 }
@@ -6,8 +6,9 @@
 <h2>CreateGrid</h2>
 
 @ViewBag.Message
-@using (Html.BeginForm())
+@using (Html.BeginForm("CreateGrid", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-<input type="submit" />
+    <input type="file" name="file" />
+    <input type="submit" />
 }
 
