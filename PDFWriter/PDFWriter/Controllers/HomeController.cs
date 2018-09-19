@@ -10,6 +10,9 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
@@ -31,8 +34,8 @@ namespace GoogleDrive.Controllers
         public ActionResult CatContract(CatContractViewModel vm)
         {
 
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 //Where to save the completed document
                 string savePath = @"C:/temp/";
                 //Where to get the PDF to print on
@@ -40,19 +43,22 @@ namespace GoogleDrive.Controllers
                 //JSON coordinates of where to print on the new PDF
                 string JSONPath = @"C:/temp/Cat Contract Coordinates.json";
 
+                //Name of new document when saved and emailed
+                string pdfName = vm.OwnerName.Replace(" ", "") + "-CatContract-" + DateTime.Today.ToString("MMddyyyy") + ".pdf";
                 //Create the document and save it to the specified location
                 PdfDocument newCatContract = PrintViewModel(vm, savePath, sourcePath, JSONPath);
 
                 //Email the document to registration
-                //EmailMethod()
+                //EmailMethod(newPDF, vm.Email, pdfName)
+
                 MemoryStream stream = new MemoryStream();
                 newCatContract.Save(stream, false);
                 return File(stream, "application/pdf", "CatContract");
-            }
-            else
-            {
-                return View(vm);
-            }
+            //}
+            //else
+            //{
+                //return View(vm);
+            //}
         }
 
         public PdfDocument PrintViewModel(dynamic vm, string savePath, string sourcePath, string JSONPath)
@@ -61,9 +67,9 @@ namespace GoogleDrive.Controllers
 
             PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
             PdfDocument newPDF = new PdfDocument();
-            newPDF.Info.Author = "Author";
-            newPDF.Info.Keywords = "Enrollment";
-            newPDF.Info.Title = "Document Title";
+            newPDF.Info.Author = "Lunar Animal Control";
+            newPDF.Info.Keywords = "Cat Contract";
+            newPDF.Info.Title = "Cat Contract";
             for (int p = 0; p < originalPDF.PageCount; p++)
             {
                 PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
@@ -87,15 +93,57 @@ namespace GoogleDrive.Controllers
                     var pageNumber = Convert.ToInt16(page.Path.Remove(0, 4));
                     foreach (JObject inputs in page["inputs"])
                     {
+                        double top;
+                        double left;
+                        string textToPrint;
                         if (inputs.Value<string>("field") == prop.Name && prop.GetValue(vm) != null)
                         {
-                            double top = inputs.Value<double>("top");
-                            double left = inputs.Value<double>("left");
+                            //SAMPLE RadioButton printing of possible options on to a pdf with evenly spaced bubbles
+                            //Set each input field in HTML to consecutive number.  THe below prints to 45 values, 15 tall and 3 wide.
+                            //left2 and left3 represent the left location of each row.  
+                            //THis could be switched to left and right and calculate middle locations accoridngly if properly spaced
+                            if (prop.Name == "Weeks")
+                            {
+
+                                int fieldValue = Convert.ToInt16(prop.GetValue(vm));
+                                int elements = 45;
+                                int columns = 3;
+                                int rows = elements / columns;
+                                int rowSpaces = rows - 1;
+
+                                //Check which column the selected radio button is in and adjust the top and left accordingly
+                                //First Column
+                                if (fieldValue <= rows)
+                                {
+                                    top = inputs.Value<double>("top") + (inputs.Value<double>("bottom") - inputs.Value<double>("top")) / rowSpaces * fieldValue;
+                                    left = inputs.Value<double>("left");
+                                }
+                                //Second Column
+                                else if (fieldValue > rows && fieldValue <= rows * 2)
+                                {
+                                    top = inputs.Value<double>("top") + (inputs.Value<double>("bottom") - inputs.Value<double>("top")) / rowSpaces * fieldValue;
+                                    left = inputs.Value<double>("left2");
+                                }
+                                //Third Column
+                                else
+                                {
+                                    top = inputs.Value<double>("top") + (inputs.Value<double>("bottom") - inputs.Value<double>("top")) / rowSpaces * fieldValue;
+                                    left = inputs.Value<double>("left3");
+                                }
+                                textToPrint = "X ";
+                            }
+
+                            else
+                            {
+                                top = inputs.Value<double>("top");
+                                left = inputs.Value<double>("left");
+                                textToPrint = prop.GetValue(vm).ToString();
+                            }
                             string fontStyle = inputs.Value<string>("fontstyle") != null ? (string)inputs.Value<string>("fontstyle") : "Regular";//Set Default fault in case none specified
                             string fontFamily = inputs.Value<string>("font") != null ? (string)inputs.Value<string>("font") : "Arial";//Set Default fault in case none specified
                             double fontSize = inputs.Value<string>("fontsize") != null ? Convert.ToDouble(inputs.Value<string>("fontsize")) : 14;//Set Default fault in case none specified
                             string propValue = prop.GetValue(vm).ToString();
-                            PrintElement(top, left, fontFamily, pageNumber, propValue, fontSize, fontStyle);
+                            PrintElement(newPDF, pageNumber, top, left, fontFamily, fontSize, fontStyle, textToPrint);
                         }
                     }
                 }
@@ -107,7 +155,8 @@ namespace GoogleDrive.Controllers
 
 
             //Add try catch in case in case it's currently open
-            //Save to Local Directory
+
+            //Save to Local Directory and open file
             //newPDF.Save(savePath);
             //Process.Start(savePath);
 
@@ -116,7 +165,7 @@ namespace GoogleDrive.Controllers
 
 
 
-            void PrintElement(double top, double left, string fontFamily, int pageNumber, string textToPrint, double fontSize, string fontStyle)
+            void PrintElement(PdfDocument newPDFdouble, int pageNumber, double top, double left, string fontFamily, double fontSize, string fontStyle, string textToPrint)
             {
                 XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]);
 
@@ -127,18 +176,14 @@ namespace GoogleDrive.Controllers
             }
 
         }
-        //GET CreateGrid
-        public ActionResult CreateGrid()
-        {
-            return View();
-        }
+
 
         /*Use createGrid to print the target document with a grid of numbers so that input box locations can be determined
          * Grids can be a single vertical or horizontal line or a full page grid
          * Change the locations in the function call to change you filepaths and uncomment the appropriate loop sections*/
         //POST CreateGrid
         [HttpPost]
-        public ActionResult createGrid()
+        public ActionResult CreateGrid()
         {
             string path = "c:/temp/";
             string file = @"Cat Contract.pdf";
@@ -147,9 +192,6 @@ namespace GoogleDrive.Controllers
             {
                 PdfDocument originalPDF = PdfReader.Open(path + file, PdfDocumentOpenMode.Import);
                 PdfDocument newPDF = new PdfDocument();
-                newPDF.Info.Author = "Lunar Animal Control";
-                newPDF.Info.Keywords = "Cat Contract Grid";
-                newPDF.Info.Title = "Cat Contract Grid";
                 for (int p = 0; p < originalPDF.PageCount; p++)
                 {
                     PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
@@ -282,6 +324,51 @@ namespace GoogleDrive.Controllers
             newPDF.Save(targetPath);
             Process.Start(targetPath);
 
+        }
+        //Send a pdf with the specified name to the currently specified email
+        public void EmailAgreement(PdfDocument documentToEmail, string EmailTarget, string pdfName)
+        {
+            if (documentToEmail.PageCount > 0)
+            {
+                //Currently sent to
+                string sourceEmail = "Jane@Does.com";
+                string sourcePass = "PassString";
+                string smtpHost = "smtp.gmail.com";
+                int smtpPort = 587;
+
+                //Prepare Message
+                MailMessage message = new MailMessage
+                {
+                    From = new MailAddress(sourceEmail),
+                    Subject = "Net Cat Aagreements",
+                    Body = "Congratulations on registering your cat.  Included in your copy of the contract and your official Cat Registartion"
+                };
+                message.To.Add(new MailAddress(EmailTarget));
+
+                
+                //Add Attachment
+                ContentType ct = new ContentType();
+                ct.MediaType = MediaTypeNames.Application.Pdf;
+                ct.Name = pdfName;
+                MemoryStream stream = new MemoryStream();
+                documentToEmail.Save(stream, false);
+                message.Attachments.Add(new System.Net.Mail.Attachment(stream, ct));
+
+                using (var smtp = new SmtpClient())
+                {
+                    var credential = new NetworkCredential
+                    {
+                        //Set proper credentials
+                        UserName = sourceEmail,
+                        Password = sourcePass
+                    };
+                    smtp.Credentials = credential;
+                    smtp.Host = smtpHost;
+                    smtp.Port = smtpPort;
+                    smtp.EnableSsl = true;
+                    smtp.Send(message);
+                }
+            }
         }
 
 
