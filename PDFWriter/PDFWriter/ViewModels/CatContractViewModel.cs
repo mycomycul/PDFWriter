@@ -49,7 +49,35 @@ namespace PDFWriter.ViewModels
                 }
             }
             [Required]
-            public int Month { get; set; }
+            string _month { get; set; }
+        public string Month
+        {
+            get { return this._month; }
+
+            set
+            {
+                if (int.TryParse(value, out int a))
+                {
+                    _month = value;
+
+                    switch (value[value.Length - 1].ToString())
+                    {
+                        case "1":
+                            _month += "st";
+                            break;
+                        case "2":
+                            _month += "nd";
+                            break;
+                        case "3":
+                            _month += "rd";
+                            break;
+                        default:
+                            _month += "th";
+                            break;
+                    }
+                }
+            }
+        }
         [Required]
         public int Year { get; set; }
 
