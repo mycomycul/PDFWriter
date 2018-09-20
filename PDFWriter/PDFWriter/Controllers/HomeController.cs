@@ -68,7 +68,6 @@ namespace GoogleDrive.Controllers
         public PdfDocument PrintViewModel(dynamic vm, string savePath, string sourcePath, string JSONPath)
         {
             /* Load PDF original into a new PDFDocument so that it can be printed to*/
-
             PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
             PdfDocument newPDF = new PdfDocument();
             newPDF.Info.Author = "Lunar Animal Control";
@@ -86,6 +85,11 @@ namespace GoogleDrive.Controllers
             //Load JSON Data for printing values and create dynamic variable to hold values
             JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
             dynamic pages = jsonPageFields.Values();
+
+            //Printing Defaults
+            var fontFamilyDefault = "Arial";
+            var fontSizeDefault = 14;
+            var fontStyleDefault = "Regular";//Regular,BoldItalic,Italic,Bold,Underline,Strikeout
 
             /*Loop through JSON Data and look for key values with corresponding Class properties and if
              * found, get the values from the ViewModel and JSON data send to print method*/
@@ -143,9 +147,9 @@ namespace GoogleDrive.Controllers
                                 left = inputs.Value<double>("left");
                                 textToPrint = prop.GetValue(vm).ToString();
                             }
-                            string fontStyle = inputs.Value<string>("fontstyle") != null ? (string)inputs.Value<string>("fontstyle") : "Regular";//Set Default fault in case none specified
-                            string fontFamily = inputs.Value<string>("font") != null ? (string)inputs.Value<string>("font") : "Arial";//Set Default fault in case none specified
-                            double fontSize = inputs.Value<string>("fontsize") != null ? Convert.ToDouble(inputs.Value<string>("fontsize")) : 14;//Set Default fault in case none specified
+                            string fontStyle = inputs.Value<string>("fontstyle") != null ? (string)inputs.Value<string>("fontstyle") : fontStyleDefault;//Set Default fault in case none specified
+                            string fontFamily = inputs.Value<string>("fontfamily") != null ? (string)inputs.Value<string>("fontfamily") : fontFamilyDefault;//Set Default fault in case none specified
+                            double fontSize = inputs.Value<string>("fontsize") != null ? Convert.ToDouble(inputs.Value<string>("fontsize")) : fontSizeDefault;//Set Default fault in case none specified
                             string propValue = prop.GetValue(vm).ToString();
                             PrintElement(newPDF, pageNumber, top, left, fontFamily, fontSize, fontStyle, textToPrint);
                         }
@@ -172,8 +176,9 @@ namespace GoogleDrive.Controllers
             void PrintElement(PdfDocument newPDFdouble, int pageNumber, double top, double left, string fontFamily, double fontSize, string fontStyle, string textToPrint)
             {
                 XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]);
-
+                
                 XFont font = new XFont(fontFamily, fontSize, (XFontStyle)Enum.Parse(typeof(XFontStyle), fontStyle));
+               
                 XPoint xTL = new XPoint(left, top);
                 gfx.DrawString(textToPrint, font, XBrushes.Black, new XRect(xTL, xTL));
                 gfx.Dispose();
