@@ -74,7 +74,7 @@ namespace PDFWriter.ViewModels
         public string PhoneNumber { get; set; }
 
         [Required]
-        [DataType(DataType.EmailAddress)]
+        [DataType(DataType.EmailAddress, ErrorMessage = "You must enter a valid email")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
@@ -82,6 +82,8 @@ namespace PDFWriter.ViewModels
         [Display(Name = "Cat's Name")]
         public string CatName2 { get; set; }
 
+        [Required(ErrorMessage = "You must provide a weight in terrestrial pounds")]
+        [RegularExpression(@"^[0-9]+$")]
         public float Weight { get; set; }
 
         [Required]

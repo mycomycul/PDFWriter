@@ -32,6 +32,7 @@ namespace GoogleDrive.Controllers
         }
         //POST: Cat Contract Data and save
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult CatContract(CatContractViewModel vm, string submit)
         {
 
@@ -40,9 +41,9 @@ namespace GoogleDrive.Controllers
                 //Where to save the completed document
                 string savePath = @"C:/temp/";
                 //Where to get the PDF to print on
-                string sourcePath = @"C:/temp/Cat Contract.pdf";
+                string sourcePath = @"~/App_data/Cat Contract.pdf";
                 //JSON coordinates of where to print on the new PDF
-                string JSONPath = @"C:/temp/Cat Contract Coordinates.json";
+                string JSONPath = @"~/App_Data/Cat Contract Coordinates.json";
 
                 //Name of new document when saved and emailed
                 string pdfName = vm.OwnerName.Replace(" ", "") + "-CatContract-" + DateTime.Today.ToString("MMddyyyy") + ".pdf";
@@ -68,7 +69,7 @@ namespace GoogleDrive.Controllers
         public PdfDocument PrintViewModel(dynamic vm, string savePath, string sourcePath, string JSONPath)
         {
             /* Load PDF original into a new PDFDocument so that it can be printed to*/
-            PdfDocument originalPDF = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
+            PdfDocument originalPDF = PdfReader.Open(Server.MapPath(sourcePath), PdfDocumentOpenMode.Import);
             PdfDocument newPDF = new PdfDocument();
             newPDF.Info.Author = "Lunar Animal Control";
             newPDF.Info.Keywords = "Cat Contract";
@@ -83,7 +84,7 @@ namespace GoogleDrive.Controllers
             PropertyInfo[] VMProperties = type.GetProperties();
 
             //Load JSON Data for printing values and create dynamic variable to hold values
-            JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
+            JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(Server.MapPath(JSONPath))) as JObject;
             dynamic pages = jsonPageFields.Values();
 
             //Printing Defaults
