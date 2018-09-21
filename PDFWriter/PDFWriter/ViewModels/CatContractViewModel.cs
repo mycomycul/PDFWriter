@@ -15,9 +15,9 @@ namespace PDFWriter.ViewModels
         [Display(Name = "Cat's Name")]
         public string CatName { get; set; }
 
-        [Required]
-        [Display(Name = "Full Name")]
-        public string OwnerName2 { get; set; }
+        //[Required]
+        //[Display(Name = "Full Name")]
+        //public string OwnerName2 { get; set; }
 
         [Required]
         string _day;
@@ -81,9 +81,9 @@ namespace PDFWriter.ViewModels
         [Required]
         public int Year { get; set; }
 
-        [Required]
-        [Display(Name = "Full Name")]
-        public string OwnerName3 { get; set; }
+        //[Required]
+        //[Display(Name = "Full Name")]
+        //public string OwnerName3 { get; set; }
 
         [Required]
         [Display(Name = "Address")]
@@ -106,13 +106,18 @@ namespace PDFWriter.ViewModels
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required]
-        [Display(Name = "Cat's Name")]
-        public string CatName2 { get; set; }
+        //[Required]
+        //[Display(Name = "Cat's Name")]
+        //public string CatName2 { get; set; }
 
         [Required(ErrorMessage = "You must provide a weight in terrestrial pounds")]
         [RegularExpression(@"^[0-9]+$")]
-        public float Weight { get; set; }
+        float _weight { get; set; }
+        public float Weight {
+            get { return this._weight; }
+
+            set { _weight = value * .165F; }
+        }
 
         [Required]
         [Display(Name = "Color")]
@@ -127,19 +132,32 @@ namespace PDFWriter.ViewModels
         [Range(111111111, 999999999, ErrorMessage = "Chip number must have 9 digits")]
         public int ChipNumber { get; set; }
 
-        [Display(Name = "Veterination Name")]
-        public string VetName { get; set; }
-        [Display(Name = "Vet Address")]
-        public string VetAddress { get; set; }
-        [Display(Name = "Vet Phone")]
-        [DataType(DataType.PhoneNumber)]
-        public string VetPhone { get; set; }
+        //[Display(Name = "Veterination Name")]
+        //public string VetName { get; set; }
+        //[Display(Name = "Vet Address")]
+        //public string VetAddress { get; set; }
+        //[Display(Name = "Vet Phone")]
+        //[DataType(DataType.PhoneNumber)]
+        //public string VetPhone { get; set; }
         [Required]
         [Display(Name = "Digital Signature")]
         public string OwnerSignature { get; set; }
 
-        [Display(Name = "Second Page Notes")]
-        public string SecondPageData { get; set; }
+        static Random r = new Random();
+        string _registrationNumber = r.Next(111111, 999999).ToString();
+        public string RegistrationNumber {
+            get
+            {
+                return _registrationNumber;
+            }
+            set
+            {             
+            }
+        }
+
+        public string DirectorSignature { get; } = "Michael Strunk";
+
+
     }
     public enum LunarState
     {

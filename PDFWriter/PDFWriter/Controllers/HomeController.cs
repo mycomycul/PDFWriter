@@ -3,6 +3,7 @@ using PdfSharp;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
+using PDFWriter.Models;
 using PDFWriter.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace GoogleDrive.Controllers
         //POST: Cat Contract Data and save
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CatContract(CatContractViewModel vm, string submit)
+        public ActionResult CatContract(string submit, CatContractViewModel vm)
         {
 
             if (ModelState.IsValid)
@@ -53,14 +54,16 @@ namespace GoogleDrive.Controllers
                 if (submit == "Submit and Email")
                 {
                     EmailAgreement(newCatContract, vm.Email, pdfName);
+                    ViewBag.Email = vm.Email;
                 }
                 else
                 {
                     MemoryStream stream = new MemoryStream();
                     newCatContract.Save(stream, false);
-                    return File(stream, "application/pdf", "CatContract");
+                    return File(stream, "application/pdf", pdfName);
                 }
-                return View("success");
+
+                return RedirectToAction("success",new { email = vm.Email });
             }
 
             return View(vm);
@@ -351,17 +354,17 @@ namespace GoogleDrive.Controllers
             if (documentToEmail.PageCount > 0)
             {
                 //Currently sent to
-                string sourceEmail = "Jane@Does.com";
-                string sourcePass = "PassString";
-                string smtpHost = "smtp.gmail.com";
+                string sourceEmail = Credentials.email;
+                string sourcePass = Credentials.pass;
+                string smtpHost = "smtp-mail.outlook.com";
                 int smtpPort = 587;
 
                 //Prepare Message
                 MailMessage message = new MailMessage
                 {
                     From = new MailAddress(sourceEmail),
-                    Subject = "Net Cat Aagreements",
-                    Body = "Congratulations on registering your cat.  Included in your copy of the contract and your official Cat Registartion"
+                    Subject = "New Cat Agreement",
+                    Body = "Congratulations on registering your cat.  Included in your copy of the contract and your official Cat Registration"
                 };
                 message.To.Add(new MailAddress(EmailTarget));
 
@@ -391,7 +394,11 @@ namespace GoogleDrive.Controllers
             }
         }
 
-
+        public ActionResult success(string email)
+        {
+            ViewBag.Email = email;
+            return View();
+        }
 
 
 
