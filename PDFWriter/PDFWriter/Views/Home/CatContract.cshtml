@@ -22,54 +22,50 @@
         </header>
 
         Under the wild species protection act, all cats are required to be kept indoors or attached to a leash no longer than 6 meters when outdoors. Cat are restricted from preying on any native lunar species and any predation by a cat resulting in loss of life by a lunar organism must be reported to Moon City Pet Control within 48 hours.<br /><br />
-        As owner, I @Html.EditorFor(model => model.OwnerName, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerName), @class = "align-center" } }) agree to provide full supervision when taking my cat outdoors or ensure that the cat is not allowed to go outside unattended. If it is determined by the interplanet species control board that my actions were negligent, the cat  @Html.EditorFor(model => model.CatName, new { htmlAttributes = new { placeholder = HttpUtility.HtmlDecode(Html.DisplayNameFor(x => x.CatName).ToString()), @class = "align-center" } })will be required to attend remediatory counseling and I will attend no less than 10 wildlife rehabilitation volunteer sessions at the nearest lunar species rehabilitation center signed on this the @Html.TextBoxFor(model => model.Day, new { @Value = DateTime.Today.Day, @readonly = "readonly", style = "width:30px"}) day of the @Html.TextBoxFor(model => model.Month, new { @Value = DateTime.Today.Month, @readonly = "readonly", style = "width:30px", @class = "align-center" }) month of the year @Html.TextBoxFor(model => model.Year, new { @Value = DateTime.Today.Year, @readonly = "readonly", @Style = "width:40px", @class = "align-center" }).
+        As owner, I @Html.EditorFor(model => model.OwnerName, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerName), @class = "align-center" } }) agree to provide full supervision when taking my cat outdoors or ensure that the cat is not allowed to go outside unattended. If it is determined by the interplanet species control board that my actions were negligent, the cat  @Html.EditorFor(model => model.CatName, new { htmlAttributes = new { placeholder = HttpUtility.HtmlDecode(Html.DisplayNameFor(x => x.CatName).ToString()), @class = "align-center" } })will be required to attend remediatory counseling and I will attend no less than 10 wildlife rehabilitation volunteer sessions at the nearest lunar species rehabilitation center signed on this the @Html.TextBoxFor(model => model.Day, new { @Value = DateTime.Today.Day, @readonly = "readonly", style = "width:30px" }) day of the @Html.TextBoxFor(model => model.Month, new { @Value = DateTime.Today.Month, @readonly = "readonly", style = "width:30px", @class = "align-center" }) month of the year @Html.TextBoxFor(model => model.Year, new { @Value = DateTime.Today.Year, @readonly = "readonly", @Style = "width:40px", @class = "align-center" }).
         <br />
 
         <div class="row" style="line-height:1.6em; margin-top:30px">
             <div class="col-xs-12 col-sm-6 ">
                 @*<div class="row">
 
-                    <div class="col-sm-3">OwnerName</div>
-                    <div class="col-sm-9">
-                        @Html.EditorFor(model => model.OwnerName3, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerName3) } })
-                    </div>
-                </div>*@
+                        <div class="col-sm-3">OwnerName</div>
+                        <div class="col-sm-9">
+                            @Html.EditorFor(model => model.OwnerName3, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerName3) } })
+                        </div>
+                    </div>*@
                 <div class="row">
-                    <div class="col-sm-3">
+                    <div class="col-xs-4 ">
                         Address
-                    </div><div class="col-sm-9">
+                    </div><div class="col-xs-8">
                         @Html.EditorFor(model => model.Address, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.Address) } })
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3">City</div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-4">City</div>
+                    <div class="col-xs-8">
                         @Html.EditorFor(model => model.City, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.City) } })
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3">State</div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-4">State</div>
+                    <div class="col-xs-8">
                         @Html.EnumDropDownListFor(model => model.State)
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3">Phone</div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-4">Phone</div>
+                    <div class="col-xs-8">
                         @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.PhoneNumber) } })
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3">Email</div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-4">Email</div>
+                    <div class="col-xs-8">
                         @Html.EditorFor(model => model.Email, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.Email) } })
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-                    </div>
-                </div>
+
 
 
             </div>
@@ -83,89 +79,70 @@
             </div>
         </div>*@
                 <div class="row">
-                    <div class="col-sm-3">Cat Weight</div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-4">Cat Weight</div>
+                    <div class="col-xs-8">
                         @Html.EditorFor(model => model.Weight)
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3">Cat Color</div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-4">Cat Color</div>
+                    <div class="col-xs-8">
                         @Html.EditorFor(model => model.Color, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.Color) } })
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3">Altered?</div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-4">Altered?</div>
+                    <div class="col-xs-8">
                         @Html.EditorFor(model => model.Fixed)
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3">
+                    <div class="col-xs-4">
                         Gender
                     </div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-8">
                         @Html.EnumDropDownListFor(model => model.Gender)
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3">Chip #</div>
-                    <div class="col-sm-9">
+                    <div class="col-xs-4">Chip #</div>
+                    <div class="col-xs-8">
                         @Html.EditorFor(model => model.ChipNumber, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.ChipNumber), min = 111111111, max = 999999999 } })
                     </div>
                 </div>
-                @*<div class="row">
-            <div class="col-sm-3">
-                Veterinarian
-            </div>
-            <div class="col-sm-9">
-                @Html.EditorFor(model => model.VetName, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.VetName) } })
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-3">Address</div>
-            <div class="col-sm-9">
-                @Html.EditorFor(model => model.VetAddress, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.VetAddress) } })
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-3">Phone</div>
-            <div class="col-sm-9">
-                @Html.EditorFor(model => model.VetPhone, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.VetPhone) } })
-            </div>
 
-        </div>*@
+
+
+            </div>
+        </div>
+        <div class="row" style="line-height:1.6em; margin-top:100px">
+            <div class="col-xs-12 col-sm-6 "></div>
+            <div class="col-xs-12 col-sm-6 ">
                 <div class="row">
-                    <br /><br /><br /><br /><br />
-                    <div class="row">
-                        <div class="col-sm-9 text-center">
-                            @Html.EditorFor(model => model.OwnerSignature, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerSignature), @style = "width:100%" } })
-                            <hr style="border:none; height:1px;background-color:#999; margin-top:5px; margin-bottom:5px;" />
-                            Owner's Signature
-                        </div>
+                    <div class="col-sm-9 text-center">
+                        @Html.EditorFor(model => model.OwnerSignature, new { htmlAttributes = new { placeholder = Html.DisplayNameFor(x => x.OwnerSignature), @style = "width:100%" } })
+                        <hr style="border:none; height:1px;background-color:#999; margin-top:5px; margin-bottom:5px;" />
+                        Owner's Signature
                     </div>
-                    </div>
-
-
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-
                 </div>
             </div>
-            <div style="margin-left:auto;margin-right:auto;text-align:center" class="form-group">
-  
-
-                <div>
-                    <input type="submit" name="submit" value="Submit and Download" class="btn btn-default" />
-                    <input type="submit" name="submit" value="Submit and Email" class="btn btn-default" />
-                </div>
 
 
+        </div>
+        <div style="margin-left:auto;margin-right:auto;margin-top:50px;text-align:center" class="form-group">
+
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+
+            <div>
+                <input type="submit" name="submit" value="Submit and Download" class="btn btn-default" />
+                <input type="submit" name="submit" value="Submit and Email" class="btn btn-default" />
             </div>
-        
-    </div>
+
+
+        </div>
+
+        </div>
 }
 
 

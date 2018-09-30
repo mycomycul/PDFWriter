@@ -6,16 +6,13 @@ using PdfSharp.Pdf.IO;
 using PDFWriter.Models;
 using PDFWriter.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Reflection;
-using System.Text;
+
 using System.Web;
 using System.Web.Mvc;
 
@@ -63,7 +60,7 @@ namespace GoogleDrive.Controllers
                     return File(stream, "application/pdf", pdfName);
                 }
 
-                return RedirectToAction("success",new { email = vm.Email });
+                return RedirectToAction("success", new { email = vm.Email });
             }
 
             return View(vm);
@@ -180,9 +177,9 @@ namespace GoogleDrive.Controllers
             void PrintElement(PdfDocument newPDFdouble, int pageNumber, double top, double left, string fontFamily, double fontSize, string fontStyle, string textToPrint)
             {
                 XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]);
-                
+
                 XFont font = new XFont(fontFamily, fontSize, (XFontStyle)Enum.Parse(typeof(XFontStyle), fontStyle));
-               
+
                 XPoint xTL = new XPoint(left, top);
                 gfx.DrawString(textToPrint, font, XBrushes.Black, new XRect(xTL, xTL));
                 gfx.Dispose();
@@ -210,7 +207,7 @@ namespace GoogleDrive.Controllers
                     Stream document = file.InputStream;
                     PdfDocument originalPDF = PdfReader.Open(document, PdfDocumentOpenMode.Import);
                     PdfDocument newPDF = new PdfDocument();
-                 
+
                     for (int p = 0; p < originalPDF.PageCount; p++)
                     {
                         PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
@@ -281,9 +278,6 @@ namespace GoogleDrive.Controllers
                 return View();
             }
         }
-
-
-
 
         /*Gets data from input boxes on form and corresponding coordinates in JSON and prints them to a new copy of a PDF*/
         //This a previous version using a string array of identically named inputs as values and identically ordered JSON coordinates
@@ -389,7 +383,15 @@ namespace GoogleDrive.Controllers
                     smtp.Host = smtpHost;
                     smtp.Port = smtpPort;
                     smtp.EnableSsl = true;
-                    smtp.Send(message);
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    try {
+                        smtp.Send(message);
+                    }
+                    catch (SmtpFailedRecipientException ex)
+                    {
+                        System.Web.HttpContext.Current.Response.Write(ex.Message);
+                    }
+
                 }
             }
         }
