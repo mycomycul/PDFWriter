@@ -14,25 +14,25 @@ Run the program and navigate to home/creategrid to upload a pdf and download it 
 ### JSON SAMPLE
 ```
 {
-  "page1": {
-    "inputs": [
-      {
-        "field": "OwnerName",
-        "left": 120,
-        "top": 285,
-        "fontfamily": "Console",
-        "fontsize":14,
-        "fontstyle":"Italic"
-        
-      },
-      {
-        "field": "CatName",
-        "left": 460,
-        "top": 320
-      },
-      ]},
-   “page2”{
-      “inputs”:[]}
+	"page1": {
+		"inputs": [{
+				"field": "OwnerName",
+				"left": 120,
+				"top": 285,
+				"fontfamily": "Console",
+				"fontsize": 14,
+				"fontstyle": "Italic"
+
+			},
+			{
+				"field": "CatName",
+				"left": 460,
+				"top": 320
+			}
+		]
+	},
+	"page2": {"inputs": [{}]
+	}
 }
 ```
 Optional: “fontfamily”, “fontsize”, “fontstyle”, bottom, left2
