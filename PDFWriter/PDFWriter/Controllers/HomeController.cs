@@ -22,7 +22,12 @@ namespace GoogleDrive.Controllers
     //Need somewehere to store locations to print at, currently in JSON
     public class HomeController : Controller
     {
+        //Get Strunktech
 
+            public ActionResult StrunkTechHome()
+        {
+            return Redirect("http://www.strunktech.com");
+        }
         // GET: Home
         public ActionResult CatContract()
         {

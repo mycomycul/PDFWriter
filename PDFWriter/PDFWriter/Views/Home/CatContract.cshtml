@@ -81,7 +81,7 @@
                 <div class="row">
                     <div class="col-xs-4">Cat Weight</div>
                     <div class="col-xs-8">
-                        @Html.EditorFor(model => model.Weight)
+                        @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { type = "number", placeholder = "10", min = "0", max = "50", step = ".5" } })
                     </div>
                 </div>
                 <div class="row">

@@ -79,6 +79,7 @@ namespace PDFWriter.ViewModels
             }
         }
         [Required]
+
         public int Year { get; set; }
 
         //[Required]
