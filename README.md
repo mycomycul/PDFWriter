@@ -51,7 +51,7 @@ Visual Studio 2017
 
 ## Built With
 
-PdfSharp 1.50.4845-RC2a
+[PdfSharp 1.50.4845-RC2a](http://www.pdfsharp.net)
 
 Visual Studio 2017
 
