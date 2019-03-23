@@ -230,7 +230,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\CatContract.cshtml" />
     <Content Include="Views\Home\CreateGrid.cshtml" />
-    <Content Include="Views\Home\View.cshtml" />
     <Content Include="Views\Home\error.cshtml" />
     <Content Include="Views\Home\success.cshtml" />
   </ItemGroup>

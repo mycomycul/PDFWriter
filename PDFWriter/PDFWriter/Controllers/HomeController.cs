@@ -192,13 +192,22 @@ namespace GoogleDrive.Controllers
 
         }
 
+        /// <summary>
+        /// Returns view for creating grid
+        /// </summary>
+        /// <returns></returns>
         public ActionResult CreateGrid()
         {
             return View();
         }
-        /*Use createGrid to print the target document with a grid of numbers so that input box locations can be determined
-         * Grids can be a single vertical or horizontal line or a full page grid
-         * Change the locations in the function call to change you filepaths and uncomment the appropriate loop sections*/
+
+        /// <summary>
+        /// Use createGrid to print the target document with a grid of numbers so that input box locations can be determined
+        /// Grids can be a single vertical or horizontal line or a full page grid
+        /// Change the locations in the function call to change you filepaths and uncomment the appropriate loop sections
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>      
         //POST CreateGrid
         [HttpPost]
         public ActionResult CreateGrid(string f)
@@ -283,9 +292,11 @@ namespace GoogleDrive.Controllers
                 return View();
             }
         }
-
-        /*Gets data from input boxes on form and corresponding coordinates in JSON and prints them to a new copy of a PDF*/
-        //This a previous version using a string array of identically named inputs as values and identically ordered JSON coordinates
+        /// <summary>
+        ///Gets data from input boxes on form and corresponding coordinates in JSON and prints them to a new copy of a PDF*/
+        ///This a previous version using a string array of identically named inputs as values and identically ordered JSON coordinates
+        /// </summary>
+        /// <param name="inputs"></param>
         public void Print(params string[] inputs)
 
         {
@@ -308,7 +319,7 @@ namespace GoogleDrive.Controllers
             }
 
             /*Create a JSON file that holds the input value locations to be printed on the PDF and update file paths.  See sample in AppData
-             *Input locations need to match the order of the input boxes on the submitted form*/
+             **/
             JObject jsonPageFields = JObject.Parse(System.IO.File.ReadAllText(JSONPath)) as JObject;
             dynamic pages = jsonPageFields;
 
@@ -347,7 +358,13 @@ namespace GoogleDrive.Controllers
             Process.Start(targetPath);
 
         }
-        //Send a pdf with the specified name to the currently specified email
+
+        /// <summary>
+        /// Send a pdf with the specified name to the currently specified email
+        /// </summary>
+        /// <param name="documentToEmail"></param>
+        /// <param name="EmailTarget"></param>
+        /// <param name="pdfName"></param>
         public void EmailAgreement(PdfDocument documentToEmail, string EmailTarget, string pdfName)
         {
             if (documentToEmail.PageCount > 0)
