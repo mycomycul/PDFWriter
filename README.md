@@ -10,7 +10,7 @@ After cloning the repository, open the sln and execute. Fill out the form and ch
 To enable emailing, proper email credentials and account information need to be set for the source account in EmailAgreement().
 
 ### To create a new project
-- Run the program and navigate to "Create Grid" to upload a pdf and download it with coordinates printed on it.  Currently it prints a full grid with 25 point resolution. Single, vertical or horizontal lines of coordinates can be created by commenting out the appropriate section in the CreateGrid method. 
+- Run the program and navigate to "Create Grid" to upload a pdf and download it with coordinates printed on it.
 - Coordinates of each intended printing location on the page needs to be saved as JSON as shown below. 
 - Update the pdf and json file location specified in CatContract().
 - Make a view with inputs and a viewmodel with properties that match the names of the inputs specified in the JSON file and use them to replace CatContract.cshtml and CatContractViewModel
@@ -61,6 +61,8 @@ Visual Studio 2017
 
 Visual Studio 2017
 
+## In Development
+Add API functionality
 
 ## Author
 
