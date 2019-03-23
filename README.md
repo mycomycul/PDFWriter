@@ -1,16 +1,19 @@
 # PDFWriter
-This .NET C# MVC Project takes HTML input and prints it, using the PDFSharp Library, on a pre-existing PDF using printing coordinates and styling saved in a JSONfile. This version prints a lunar cat ownership agreement and e-mails or downloads it. 
+This .NET C# MVC Project takes HTML input and prints it, using the PDFSharp Library, on a pre-existing PDF using printing coordinates and styling saved in a JSON file. This version prints a lunar cat ownership agreement and e-mails or downloads it. 
 
 ## Motivation
 The original intent was to provide for filling out extensive digital contracts online, printing the data on a preexisting contracts in PDF format, and e-mailing them to the legal department to be countersigned. The company wanted a solution that translated responsive web styling into a reliable paper formatting. All of the solutions were either overly complicated or required another licensing fee for an API so I wanted to build something that could be reused without too much setup or overhead.  This is a basic sample of the deployed solution.
 
 ## Getting Started
-After cloning the repository, the CatContract() needs to have the locations of the PDF, JSON and local save location updated.
-To enable emailing, proper email credentials and account information needs to be set for the source account in EmailAgreement().
+
+After cloning the repository, open the sln and execute. Fill out the form and choose "Submit and Download". You will recieve a copy of the contract and a certificate of registration.
+To enable emailing, proper email credentials and account information need to be set for the source account in EmailAgreement().
 
 ### To create a new project
-Run the program and navigate to home/creategrid to upload a pdf and download it with coordinates printed on it.  Currently it prints a full grid with 25 point resolution. Single, vertical or horizontal lines of coordinates can be created by commenting out the appropriate section in the CreateGrid method. Coordinates of each intended printing location on the page needs to be saved as JSON at the location specified in CatContract().  
-
+- Run the program and navigate to "Create Grid" to upload a pdf and download it with coordinates printed on it.  Currently it prints a full grid with 25 point resolution. Single, vertical or horizontal lines of coordinates can be created by commenting out the appropriate section in the CreateGrid method. 
+- Coordinates of each intended printing location on the page needs to be saved as JSON as shown below. 
+- Update the pdf and json file location specified in CatContract().
+- Make a view with inputs and a viewmodel with properties that match the names of the inputs specified in the JSON file and use them to replace CatContract.cshtml and CatContractViewModel
 ### JSON Sample
 ```
 {
