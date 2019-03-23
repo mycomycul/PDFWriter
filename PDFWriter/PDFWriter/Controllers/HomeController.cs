@@ -16,23 +16,24 @@ using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 
-namespace GoogleDrive.Controllers
+namespace PDFWriter.Controllers
 {
 
-    //Need somewehere to store locations to print at, currently in JSON
+    
     public class HomeController : Controller
     {
-        //Get Strunktech
 
-            public ActionResult StrunkTechHome()
-        {
-            return Redirect("http://www.strunktech.com");
-        }
         // GET: Home
         public ActionResult CatContract()
         {
             return View();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="submit">For </param>
+        /// <param name="vm">ViewModel containing properties that match those specified in Json Coordinates</param>
+        /// <returns></returns>
         //POST: Cat Contract Data and save
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -41,8 +42,10 @@ namespace GoogleDrive.Controllers
 
             if (ModelState.IsValid)
             {
-                //Where to save the completed document
-                string savePath = @"C:/temp/";
+                //Where to save the completed document locally.  Uncomment to enable
+                //string savePath = @"C:/temp/";
+                string savePath = null;
+
                 //Where to get the PDF to print on
                 string sourcePath = @"~/App_data/Cat Contract.pdf";
                 //JSON coordinates of where to print on the new PDF
@@ -51,7 +54,7 @@ namespace GoogleDrive.Controllers
                 //Name of new document when saved and emailed
                 string pdfName = vm.OwnerName.Replace(" ", "") + "-CatContract-" + DateTime.Today.ToString("MMddyyyy") + ".pdf";
                 //Create the document and save it to the specified location
-                PdfDocument newCatContract = PrintViewModel(vm, savePath, sourcePath, JSONPath);
+                PdfDocument newCatContract = PrintPdfFromViewModel(vm, savePath, sourcePath, JSONPath);
 
                 if (submit == "Submit and Email")
                 {
@@ -70,8 +73,15 @@ namespace GoogleDrive.Controllers
 
             return View(vm);
         }
-
-        public PdfDocument PrintViewModel(dynamic vm, string savePath, string sourcePath, string JSONPath)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vm">View model that matches json properties</param>
+        /// <param name="savePath">Where to save locally. Uncomment code</param>
+        /// <param name="sourcePath"></param>
+        /// <param name="JSONPath"></param>
+        /// <returns></returns>
+        public PdfDocument PrintPdfFromViewModel(dynamic vm, string savePath, string sourcePath, string JSONPath)
         {
             /* Load PDF original into a new PDFDocument so that it can be printed to*/
             PdfDocument originalPDF = PdfReader.Open(Server.MapPath(sourcePath), PdfDocumentOpenMode.Import);
@@ -164,15 +174,22 @@ namespace GoogleDrive.Controllers
 
             }
             //Build savePath with applicant's name
-            string name = vm.OwnerName != null ? vm.OwnerName.Replace(" ", "") : "Unknown";
-            savePath += "CatContract-" + name + DateTime.Today.ToString("MMddyyyy") + ".pdf";
-
-
-            //Add try catch in case in case it's currently open
-
-            //Save to Local Directory and open file
-            //newPDF.Save(savePath);
-            //Process.Start(savePath);
+            if (savePath != null)
+            {
+                string name = vm.OwnerName != null ? vm.OwnerName.Replace(" ", "") : "Unknown";
+                savePath += "CatContract-" + name + DateTime.Today.ToString("MMddyyyy") + ".pdf";
+                //Save to Local Directory and open file
+                try
+                {
+                    
+                    newPDF.Save(savePath);
+                    Process.Start(savePath);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
 
             return newPDF;
 
@@ -294,7 +311,7 @@ namespace GoogleDrive.Controllers
         }
         /// <summary>
         ///Gets data from input boxes on form and corresponding coordinates in JSON and prints them to a new copy of a PDF*/
-        ///This a previous version using a string array of identically named inputs as values and identically ordered JSON coordinates
+        ///This a deprecated version using a string array of identically named inputs as values and identically ordered JSON coordinates
         /// </summary>
         /// <param name="inputs"></param>
         public void Print(params string[] inputs)
@@ -360,29 +377,26 @@ namespace GoogleDrive.Controllers
         }
 
         /// <summary>
-        /// Send a pdf with the specified name to the currently specified email
+        /// Send a pdf with the currently specified credentials
         /// </summary>
-        /// <param name="documentToEmail"></param>
-        /// <param name="EmailTarget"></param>
-        /// <param name="pdfName"></param>
-        public void EmailAgreement(PdfDocument documentToEmail, string EmailTarget, string pdfName)
+        /// <param name="pdfToEmail">Pdf to send</param>
+        /// <param name="emailTarget">What email address to send to</param>
+        /// <param name="pdfName">Name of pdf for attaching to email</param>
+        public void EmailAgreement(PdfDocument pdfToEmail, string emailTarget, string pdfName)
         {
-            if (documentToEmail.PageCount > 0)
+            if (pdfToEmail.PageCount > 0)
             {
-                //Currently sent to
-                string sourceEmail = Credentials.email;
-                string sourcePass = Credentials.pass;
-                string smtpHost = "smtp-mail.outlook.com";
-                int smtpPort = 587;
+
+                Credentials c = new Credentials("username@gmail.com", "password", "hostAddress", 587);
 
                 //Prepare Message
                 MailMessage message = new MailMessage
                 {
-                    From = new MailAddress(sourceEmail),
+                    From = new MailAddress(c.Email),
                     Subject = "New Cat Agreement",
                     Body = "Congratulations on registering your cat.  Included in your copy of the contract and your official Cat Registration"
                 };
-                message.To.Add(new MailAddress(EmailTarget));
+                message.To.Add(new MailAddress(emailTarget));
 
 
                 //Add Attachment
@@ -390,7 +404,7 @@ namespace GoogleDrive.Controllers
                 ct.MediaType = MediaTypeNames.Application.Pdf;
                 ct.Name = pdfName;
                 MemoryStream stream = new MemoryStream();
-                documentToEmail.Save(stream, false);
+                pdfToEmail.Save(stream, false);
                 message.Attachments.Add(new System.Net.Mail.Attachment(stream, ct));
 
                 using (var smtp = new SmtpClient())
@@ -398,12 +412,12 @@ namespace GoogleDrive.Controllers
                     var credential = new NetworkCredential
                     {
                         //Set proper credentials
-                        UserName = sourceEmail,
-                        Password = sourcePass
+                        UserName = c.Email,
+                        Password = c.Password
                     };
                     smtp.Credentials = credential;
-                    smtp.Host = smtpHost;
-                    smtp.Port = smtpPort;
+                    smtp.Host = c.HostAddress;
+                    smtp.Port = c.HostPort;
                     smtp.EnableSsl = true;
                     smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                     try {
@@ -422,6 +436,13 @@ namespace GoogleDrive.Controllers
         {
             ViewBag.Email = email;
             return View();
+        }
+
+
+        //Get Strunktech
+        public ActionResult StrunkTechHome()
+        {
+            return Redirect("http://www.strunktech.com");
         }
 
 
