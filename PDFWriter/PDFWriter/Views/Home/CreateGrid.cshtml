@@ -8,7 +8,16 @@
 @ViewBag.Message
 @using (Html.BeginForm("CreateGrid", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    <input type="file" name="file" />
-    <input type="submit" />
+
+    <div style="margin-left:20px;">
+        <input type="radio" name="gridtype" value="fullgrid" /> Print Full Grid <br />
+        <input type="radio" name="gridtype" value="ygrid" /> Print Vertical Grid at Center<br />
+        <input type="radio" name="gridtype" value="xgrid" /> Print Horizontal Grid at Center<br />
+    </div><br/>
+
+    <input type="file" name="file" accept="application/pdf" required />
+    <input type="submit" value="Print Grid on PDF" />
 }
+<br />
+@Html.ValidationSummary(null, new { @class = "text-danger" })
 

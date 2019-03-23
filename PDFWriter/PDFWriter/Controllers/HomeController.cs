@@ -19,7 +19,7 @@ using System.Web.Mvc;
 namespace PDFWriter.Controllers
 {
 
-    
+
     public class HomeController : Controller
     {
 
@@ -181,7 +181,7 @@ namespace PDFWriter.Controllers
                 //Save to Local Directory and open file
                 try
                 {
-                    
+
                     newPDF.Save(savePath);
                     Process.Start(savePath);
                 }
@@ -217,17 +217,17 @@ namespace PDFWriter.Controllers
         {
             return View();
         }
-
+        //TODO: Isolate Printing into class and isolate x,y and full grid into function
         /// <summary>
         /// Use createGrid to print the target document with a grid of numbers so that input box locations can be determined
         /// Grids can be a single vertical or horizontal line or a full page grid
-        /// Change the locations in the function call to change you filepaths and uncomment the appropriate loop sections
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>      
         //POST CreateGrid
         [HttpPost]
-        public ActionResult CreateGrid(string f)
+        [ActionName("CreateGrid")]
+        public ActionResult PrintGrid(string gridtype)
         {
             HttpPostedFileBase file = Request.Files["file"];
             var contentType = file.ContentType;
@@ -244,51 +244,58 @@ namespace PDFWriter.Controllers
                         PdfPage page = newPDF.AddPage(originalPDF.Pages[p]);
                         page.Size = PageSize.A4;
                     }
-
-                    /*Loop 1: Create one vertical line of coordinates. Change left to move line horizontally. Coordinates in (left,top) format*/
-                    //double left = 260;
-                    //for (int top = 0; top < 36; top++)
-                    //{
-                    //    using (XGraphics gfx = XGraphics.FromPdfPage(page))
-                    //    {
-                    //        //XGraphics gfx = XGraphics.FromPdfPage(page);
-                    //        XFont font = new XFont("Times New Roman", 6, XFontStyle.BoldItalic);
-                    //        XPoint xTL = new XPoint(left, top * 25);
-                    //        XPoint xBR = new XPoint(left, top * 25);
-                    //        gfx.DrawString((left).ToString() + "," + (top * 25).ToString(), font, XBrushes.Black, new XRect(xTL, xBR));
-                    //    }
-                    //}
-
-                    /*Loop 2: Create one horizontal line of coordinates. Change top to move line vertically. Coordinates in (left,top) format*/
-                    //double top = 450;
-                    //for (int left = 0; left < 25; left++)
-                    //{
-                    //    using (XGraphics gfx = XGraphics.FromPdfPage(page))
-                    //    {
-                    //        //XGraphics gfx = XGraphics.FromPdfPage(page);
-                    //        XFont font = new XFont("Times New Roman", 6, XFontStyle.BoldItalic);
-                    //        XPoint xTL = new XPoint(left *25, top);
-                    //        XPoint xBR = new XPoint(left *25, top);
-                    //        gfx.DrawString((left * 25).ToString() + "," + (top).ToString(), font, XBrushes.Black, new XRect(xTL, xBR));
-                    //    }
-                    //}
-
-                    //Loop 3: Create entire page of gridding
                     for (int p = 0; p < newPDF.PageCount; p++)
                     {
-                        for (int x = 0; x < 25; x++)
+                        double top;
+                        double left;
+                        int xspacing = 40; //Frequency of horizontal grid points
+                        int yspacing = 40; //Frequency of vertical grid points 
+                        XFont font = new XFont("Times New Roman", 6, XFontStyle.BoldItalic);
+                        switch (gridtype)
                         {
-                            for (int y = 0; y < 36; y++)
-                            {
-                                using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[p]))
+
+                            /*Loop 1: Create one vertical line of coordinates. Change left to move line horizontally. Coordinates in (left,top) format*/
+                            case "ygrid":
+                                left = newPDF.Pages[p].Width/2;
+                                for (top = 0; top * yspacing < newPDF.Pages[p].Height; top++)
                                 {
-                                    //XGraphics gfx = XGraphics.FromPdfPage(page);
-                                    XFont font = new XFont("Times New Roman", 6, XFontStyle.BoldItalic);
-                                    XPoint xTL = new XPoint(x * 25, y * 25);
-                                    XPoint xBR = new XPoint(x * 25, y * 25);
-                                    gfx.DrawString((x * 25).ToString() + "," + (y * 25).ToString(), font, XBrushes.Black, new XRect(xTL, xBR));
+                                    using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[p]))
+                                    {
+                                        XPoint xTL = new XPoint(left, top * yspacing);
+                                        XPoint xBR = new XPoint(left, top * yspacing);
+                                        gfx.DrawString((left).ToString() + "," + (top * yspacing).ToString(), font, XBrushes.Black, new XRect(xTL, xBR));
+                                    }
                                 }
-                            }
+                                break;
+                            /*Loop 2: Create one horizontal line of coordinates. Change top to move line vertically. Coordinates in (left,top) format*/
+                            case "xgrid":
+                                top = newPDF.Pages[p].Height / 2;
+                                for (left = 0; left * xspacing < newPDF.Pages[p].Width; left++)
+                                {
+                                    using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[p]))
+                                    {                                 
+                                        XPoint xTL = new XPoint(left * xspacing, top);
+                                        XPoint xBR = new XPoint(left * xspacing, top);
+                                        gfx.DrawString((left * xspacing).ToString() + "," + (top).ToString(), font, XBrushes.Black, new XRect(xTL, xBR));
+                                    }
+                                }
+                                break;
+
+                            //Loop 3: Create entire page of gridding
+                            default:
+                                for (int x = 0; x*xspacing < newPDF.Pages[p].Width; x++)
+                                {
+                                    for (int y = 0; y*yspacing < newPDF.Pages[p].Height; y++)
+                                    {
+                                        using (XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[p]))
+                                        {
+                                            XPoint xTL = new XPoint(x * xspacing, y * yspacing);
+                                            XPoint xBR = new XPoint(x * xspacing, y * yspacing);
+                                            gfx.DrawString((x * xspacing).ToString() + "," + (y * yspacing).ToString(), font, XBrushes.Black, new XRect(xTL, xBR));
+                                        }
+                                    }
+                                }
+                                break;
                         }
                     }
                     //Save Location for the Grid File
@@ -300,17 +307,17 @@ namespace PDFWriter.Controllers
                 {
 
                     ViewBag.Message = "Something went wrong, plase try again";
-                    return View();
+                    return View("CreateGrid");
                 }
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "The file you uploaded doesn't seem to be a PDF, please try again.");
-                return View();
+                return View("CreateGrid");
             }
         }
         /// <summary>
-        ///Gets data from input boxes on form and corresponding coordinates in JSON and prints them to a new copy of a PDF*/
+        ///<para>Gets data from input boxes on form and corresponding coordinates in JSON and prints them to a new copy of a PDF</para>
         ///This a deprecated version using a string array of identically named inputs as values and identically ordered JSON coordinates
         /// </summary>
         /// <param name="inputs"></param>
@@ -420,7 +427,8 @@ namespace PDFWriter.Controllers
                     smtp.Port = c.HostPort;
                     smtp.EnableSsl = true;
                     smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    try {
+                    try
+                    {
                         smtp.Send(message);
                     }
                     catch (SmtpFailedRecipientException ex)
