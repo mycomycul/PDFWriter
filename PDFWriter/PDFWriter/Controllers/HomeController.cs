@@ -12,7 +12,6 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Reflection;
-
 using System.Web;
 using System.Web.Mvc;
 
@@ -29,12 +28,11 @@ namespace PDFWriter.Controllers
             return View();
         }
         /// <summary>
-        /// 
+        /// POST: Create PDF and Save, Email or Download
         /// </summary>
-        /// <param name="submit">For </param>
+        /// <param name="submit">Check if the the user requested an email</param>
         /// <param name="vm">ViewModel containing properties that match those specified in Json Coordinates</param>
         /// <returns></returns>
-        //POST: Cat Contract Data and save
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CatContract(string submit, CatContractViewModel vm)
@@ -42,42 +40,68 @@ namespace PDFWriter.Controllers
 
             if (ModelState.IsValid)
             {
-                //Where to save the completed document locally.  Uncomment to enable
-                //string savePath = @"C:/temp/";
-                string savePath = null;
+                
+                string savePath = null;//Where to save locally; null to disable
+                string sourcePath = @"~/App_data/Cat Contract.pdf";//PDF target document             
+                string JSONPath = @"~/App_Data/Cat Contract Coordinates.json";//JSON coordinates of where to print on the new PDF
+                //Build Filename
+                string ContractSignerName = vm.OwnerName != null ? vm.OwnerName.Replace(" ", "") : "Unknown";
+                string pdfName =  "CatContract-" + ContractSignerName + "-" + DateTime.Today.ToString("MMddyyyy") + ".pdf";
 
-                //Where to get the PDF to print on
-                string sourcePath = @"~/App_data/Cat Contract.pdf";
-                //JSON coordinates of where to print on the new PDF
-                string JSONPath = @"~/App_Data/Cat Contract Coordinates.json";
 
-                //Name of new document when saved and emailed
-                string pdfName = vm.OwnerName.Replace(" ", "") + "-CatContract-" + DateTime.Today.ToString("MMddyyyy") + ".pdf";
                 //Create the document and save it to the specified location
                 PdfDocument newCatContract = PrintPdfFromViewModel(vm, savePath, sourcePath, JSONPath);
 
+                if (savePath != null)
+                {
+                    SavePdfLocally(savePath, newCatContract, vm, pdfName);
+                }
                 if (submit == "Submit and Email")
                 {
-                    EmailAgreement(newCatContract, vm.Email, pdfName);
+                    try
+                    {
+                        EmailAgreement(newCatContract, vm.Email, pdfName);
+                    }
+                    catch(Exception e)
+                    {
+                        ModelState.AddModelError("empty", e.Message + " Please try downloading instead");
+                        return View();
+                    }
                     ViewBag.Email = vm.Email;
-                }
-                else
-                {
-                    MemoryStream stream = new MemoryStream();
-                    newCatContract.Save(stream, false);
-                    return File(stream, "application/pdf", pdfName);
+                    return RedirectToAction("success", new { email = vm.Email });
                 }
 
-                return RedirectToAction("success", new { email = vm.Email });
+                MemoryStream stream = new MemoryStream();
+                newCatContract.Save(stream, false);
+                return File(stream, "application/pdf", pdfName);
+
             }
 
             return View(vm);
+        }
+
+        public void SavePdfLocally(string savePath, PdfDocument pdf, CatContractViewModel vm, string filename)
+        {
+
+            savePath += filename;
+            //Save to Local Directory and open file
+            try
+            {
+
+                pdf.Save(savePath);
+                //Uncomment to open after saving locally
+                //Process.Start(savePath);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="vm">View model that matches json properties</param>
-        /// <param name="savePath">Where to save locally. Uncomment code</param>
+        /// <param name="savePath">Where to save locally. Set to null to not save locally</param>
         /// <param name="sourcePath"></param>
         /// <param name="JSONPath"></param>
         /// <returns></returns>
@@ -173,40 +197,30 @@ namespace PDFWriter.Controllers
                 }
 
             }
-            //Build savePath with applicant's name
-            if (savePath != null)
-            {
-                string name = vm.OwnerName != null ? vm.OwnerName.Replace(" ", "") : "Unknown";
-                savePath += "CatContract-" + name + DateTime.Today.ToString("MMddyyyy") + ".pdf";
-                //Save to Local Directory and open file
-                try
-                {
 
-                    newPDF.Save(savePath);
-                    Process.Start(savePath);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
 
             return newPDF;
+        }
+        /// <summary>
+        /// Prints an individual string to a pdf document
+        /// </summary>
+        /// <param name="pdf">Pdf to print to</param>
+        /// <param name="pageNumber"></param>
+        /// <param name="top">Distancefrom top in pts for printing text</param>
+        /// <param name="left">Distancefrom top in pts for printing text</param>
+        /// <param name="fontFamily"></param>
+        /// <param name="fontSize"></param>
+        /// <param name="fontStyle"></param>
+        /// <param name="textToPrint"></param>
+        void PrintElement(PdfDocument pdf, int pageNumber, double top, double left, string fontFamily, double fontSize, string fontStyle, string textToPrint)
+        {
+            XGraphics gfx = XGraphics.FromPdfPage(pdf.Pages[pageNumber - 1]);
 
+            XFont font = new XFont(fontFamily, fontSize, (XFontStyle)Enum.Parse(typeof(XFontStyle), fontStyle));
 
-
-
-            void PrintElement(PdfDocument newPDFdouble, int pageNumber, double top, double left, string fontFamily, double fontSize, string fontStyle, string textToPrint)
-            {
-                XGraphics gfx = XGraphics.FromPdfPage(newPDF.Pages[pageNumber - 1]);
-
-                XFont font = new XFont(fontFamily, fontSize, (XFontStyle)Enum.Parse(typeof(XFontStyle), fontStyle));
-
-                XPoint xTL = new XPoint(left, top);
-                gfx.DrawString(textToPrint, font, XBrushes.Black, new XRect(xTL, xTL));
-                gfx.Dispose();
-            }
-
+            XPoint xTL = new XPoint(left, top);
+            gfx.DrawString(textToPrint, font, XBrushes.Black, new XRect(xTL, xTL));
+            gfx.Dispose();
         }
 
         /// <summary>
@@ -217,17 +231,21 @@ namespace PDFWriter.Controllers
         {
             return View();
         }
-        //TODO: Isolate Printing into class and isolate x,y and full grid into function
+
+
+        //TODO: Isolate Printing into class and isolate x,y and full grid into functions
         /// <summary>
-        /// Use createGrid to print the target document with a grid of numbers so that input box locations can be determined
+        /// <para>POST/CreateGrid</para>
+        /// Use createGrid to print the target document with a grid of numbers so that input box locations can be determined.
         /// Grids can be a single vertical or horizontal line or a full page grid
         /// </summary>
-        /// <param name="f"></param>
+        /// <param name="gridtype">"xgrid", "ygrid" or default fullgrid</param>
+        /// <param name="xspacing">Optional: pts between vertical rows</param>
+        /// <param name="yspacing">Optional: pts between horizontal rows</param>
         /// <returns></returns>      
-        //POST CreateGrid
         [HttpPost]
         [ActionName("CreateGrid")]
-        public ActionResult PrintGrid(string gridtype)
+        public ActionResult PrintGrid(string gridtype, int xspacing = 40, int yspacing = 40)
         {
             HttpPostedFileBase file = Request.Files["file"];
             var contentType = file.ContentType;
@@ -248,8 +266,7 @@ namespace PDFWriter.Controllers
                     {
                         double top;
                         double left;
-                        int xspacing = 40; //Frequency of horizontal grid points
-                        int yspacing = 40; //Frequency of vertical grid points 
+
                         XFont font = new XFont("Times New Roman", 6, XFontStyle.BoldItalic);
                         switch (gridtype)
                         {
@@ -427,14 +444,10 @@ namespace PDFWriter.Controllers
                     smtp.Port = c.HostPort;
                     smtp.EnableSsl = true;
                     smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    try
-                    {
-                        smtp.Send(message);
-                    }
-                    catch (SmtpFailedRecipientException ex)
-                    {
-                        System.Web.HttpContext.Current.Response.Write(ex.Message);
-                    }
+                    
+                    smtp.Send(message);
+                    
+
 
                 }
             }
