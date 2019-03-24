@@ -21,6 +21,7 @@ input,
 select,
 textarea {
     max-width: 280px;
+    margin:5px;
 }
 .align-center{
     text-align:center;
@@ -28,4 +29,7 @@ textarea {
 
 ul {
   padding: 0;  
+}
+.input-validation-error {
+    box-shadow: 1px 1px rgba(255,0,0,.4 ), -1px -1px rgba(255,0,0,.4 );
 }
